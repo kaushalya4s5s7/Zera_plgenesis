@@ -5,12 +5,19 @@ export const CHAIN_CONFIG = {
     contractAddress: "0xc1140c23394322b65b99A6C6BdB33387f8A9432D",
     explorer: "https://edu-chain-testnet.blockscout.com/",
   },
+  Pharos: {
+    chainId: 50002,
+    name: "Pharos Devnet",
+    contractAddress: "0x233912C9FE3198A8CAF8AE493c2C970130cbC8B4", // Example ERC-20 Token
+    explorer: "https://pharosscan.xyz/",
+  },
 } as const;
 
 export type ChainKey = keyof typeof CHAIN_CONFIG;
 
 export const CONTRACT_ADDRESSES = {
   Educhain: CHAIN_CONFIG.Educhain.contractAddress,
+  Pharos: CHAIN_CONFIG.Pharos.contractAddress,
 } as const;
 
 export const AUDIT_REGISTRY_ABI = [
