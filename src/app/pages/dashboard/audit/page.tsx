@@ -269,7 +269,7 @@ interface AuditIssue {
 }
 
 // Address of the deployed AuditRegistry contract
-const AUDIT_REGISTRY_ADDRESS = "0xc1140c23394322b65b99A6C6BdB33387f8A9432D";
+const AUDIT_REGISTRY_ADDRESS = "0x233912C9FE3198A8CAF8AE493c2C970130cbC8B4";
 const parseIssuesFromAuditReport = (auditReport: string): AuditIssue[] => {
   const issues: AuditIssue[] = [];
   const lines = auditReport.split("\n");
@@ -440,11 +440,9 @@ const AuditPage = () => {
       return;
     }
 
-    const EDUCHAIN_TESTNET_CHAIN_ID = "0xa045c"; // Hexadecimal equivalent of 656476
-    const EDUCHAIN_TESTNET_RPC_URL =
-      "https://rpc.open-campus-codex.gelato.digital";
-    const EDUCHAIN_TESTNET_EXPLORER_URL =
-      "https://edu-chain-testnet.blockscout.com";
+    const Pharos_Devnet_CHAIN_ID = "0xc352"; // Hexadecimal equivalent of 656476
+    const Pharos_Devnet_RPC_URL = "https://devnet.dplabs-internal.com";
+    const Pharos_Devnet_EXPLORER_URL = "https://pharosscan.xyz/";
 
     try {
       setIsRegistering(true);
@@ -453,7 +451,7 @@ const AuditPage = () => {
       try {
         await window.ethereum.request({
           method: "wallet_switchEthereumChain",
-          params: [{ chainId: EDUCHAIN_TESTNET_CHAIN_ID }],
+          params: [{ chainId: Pharos_Devnet_CHAIN_ID }],
         });
       } catch (switchError) {
         // Handle specific error codes
@@ -464,15 +462,15 @@ const AuditPage = () => {
               method: "wallet_addEthereumChain",
               params: [
                 {
-                  chainId: EDUCHAIN_TESTNET_CHAIN_ID,
-                  chainName: "EduChain Testnet",
-                  rpcUrls: [EDUCHAIN_TESTNET_RPC_URL],
+                  chainId: Pharos_Devnet_CHAIN_ID,
+                  chainName: "Pharos Devnet",
+                  rpcUrls: [Pharos_Devnet_RPC_URL],
                   nativeCurrency: {
-                    name: "EduChain Testnet Token",
+                    name: "Pharos Devnet Token",
                     symbol: "EDU",
                     decimals: 18,
                   },
-                  blockExplorerUrls: [EDUCHAIN_TESTNET_EXPLORER_URL],
+                  blockExplorerUrls: [Pharos_Devnet_EXPLORER_URL],
                 },
               ],
             });
@@ -481,24 +479,20 @@ const AuditPage = () => {
             if ((addError as any).code === -32603) {
               console.warn("Network is already added. Proceeding...");
             } else {
-              console.error("Failed to add the EduChain testnet:", addError);
+              console.error("Failed to add the Pharos Devnet:", addError);
               toast({
                 title: "Network Error",
-                description:
-                  "Failed to add the EduChain testnet to your wallet.",
+                description: "Failed to add the Pharos Devnet to your wallet.",
                 variant: "destructive",
               });
               return;
             }
           }
         } else {
-          console.error(
-            "Failed to switch to the EduChain testnet:",
-            switchError
-          );
+          console.error("Failed to switch to the Pharos Devnet:", switchError);
           toast({
             title: "Network Error",
-            description: "Failed to switch to the EduChain testnet.",
+            description: "Failed to switch to the Pharos Devnet.",
             variant: "destructive",
           });
           return;
