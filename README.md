@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ⚡ Zera: Revolutionizing Smart Contract Security
 
-## Getting Started
+**Zera** is a powerful AI-powered platform designed to streamline and secure smart contract development. In a world where smart contracts manage billions of dollars and security breaches cost millions, Zera is built to deliver **intelligent automation**, **comprehensive auditing**, and **secure contract development** — all in one platform.
 
-First, run the development server:
+---
 
+## 🚀 Key Features
+
+🔹 **Smart Contract Generation**  
+AI-assisted contract creation using secure, optimized templates.
+
+🔹 **Automated Test Suite**  
+Generate 100+ test cases per contract to ensure both functionality and security.
+
+🔹 **One-Click Security Audits**  
+Run AI-based vulnerability assessments using the Mistral LLM API.
+
+🔹 **Detailed Audit Analysis**  
+Generate professional-grade audit reports and actionable risk mitigation steps.
+
+🔹 **Documentation Generator**  
+Instantly create technical documentation for smart contracts.
+
+---
+
+## 🛡 Why Zera?
+![image](https://github.com/user-attachments/assets/4beb1d40-b14d-4ee6-bcf4-e8e0181efb4f)
+
+Smart contracts power DeFi, NFTs, DAOs — yet they remain vulnerable. From the **DAO Hack ($50M)** to **Euler Finance ($197M)**, the threat is real. Zera solves this by:
+
+- Preventing exploits before deployment  
+- Speeding up development cycles  
+- Empowering devs with test-driven, secure coding practices  
+- Running on the **fast, low-cost Pharos Chain**
+
+---
+
+## 🌐 Platform Workflow
+![image](https://github.com/user-attachments/assets/2a1abd28-e248-42cc-9539-123ba50f27c3)
+
+1. **Connect Wallet**
+2. **Generate Contracts** using AI prompts
+3. **Run Audits** powered by Mistral LLM
+4. **View Audit Reports** and patch vulnerabilities
+5. **Generate Tests** with Hardhat/Foundry integrations
+6. **Auto-generate Documentation** for transparency
+
+Everything is stored and processed securely — no manual intervention required.
+![image](https://github.com/user-attachments/assets/a12f86ed-ec53-43f5-ba29-64486a3439f0)
+
+---
+
+## 🧰 Tech Stack
+
+
+
+- **Testing**: Hardhat, Foundry, Truffle
+- **Frontend**: React/Next.js
+- **Security**: Automated audits & vulnerability scans
+- **Blockchain**: Smart Contract deployed on  Pharos devnet ( address:0x233912C9FE3198A8CAF8AE493c2C970130cbC8B4 )
+- **AI**: Mistral LLM API
+
+---
+
+## 🔧 Getting Started
+
+### 📥 Installation
 ```bash
+git clone https://github.com/kaushalya4s5s7/Zera_.git
+
+```
+Run:
+```
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+📫 Contact
+Have questions or need support?
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+📩 Email: zeraaihelp@gmail.com
+🌐 Visit: [zera-ai.onrender.com](https://zera-eulu.onrender.com)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+📢 Contributing
+We welcome community collaboration!
 
-## Learn More
+📁 Fork the repository
 
-To learn more about Next.js, take a look at the following resources:
+🛠 Create a feature branch
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+✅ Submit a pull request with detailed explanation!
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+📜 License
+This project is licensed under the MIT License.
