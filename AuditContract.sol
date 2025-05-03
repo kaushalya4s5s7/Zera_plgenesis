@@ -105,4 +105,8 @@ contract AuditRegistry {
     function getTotalContracts() external view returns (uint256) {
         return allContractHashes.length;
     }
+    function getContractHashByIndex(uint256 index) external view returns (bytes32) {
+    require(index < allContractHashes.length, "Index out of bounds");
+    return allContractHashes[index];
+}
 }
