@@ -47,10 +47,10 @@ const DataTable = ({ className }: DataTableProps) => {
           const network = await provider.getNetwork();
           const chainId = Number(network.chainId);
 
-          if (chainId !== CHAIN_CONFIG.Educhain.chainId) {
+          if (chainId !== CHAIN_CONFIG.Pharos.chainId) {
             toast({
               title: "Wrong Network",
-              description: "Please switch to Educhain Test Network",
+              description: "Please switch to Pharos Test Network",
               variant: "destructive",
             });
             return;
@@ -60,7 +60,7 @@ const DataTable = ({ className }: DataTableProps) => {
           // Log contract address and network
           const contractAddress =
             CONTRACT_ADDRESSES[network.name as ChainKey] ||
-            CONTRACT_ADDRESSES.Educhain;
+            CONTRACT_ADDRESSES.Pharos;
 
           const auditRegistry = new ethers.Contract(
             contractAddress,
@@ -90,7 +90,7 @@ const DataTable = ({ className }: DataTableProps) => {
                 allAudits.unshift({
                   id: i + 1,
                   name: `Contract ${i}`,
-                  chain: "Educhain",
+                  chain: "Pharos",
                   rating: Number(audit.stars),
                   auditor: audit.auditor,
                   date: new Date(
