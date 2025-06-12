@@ -6,18 +6,20 @@ declare global {
     ethereum?: any;
   }
 }
-
+import { useUser } from "@civic/auth-web3/react";
 import { useState } from "react";
 import DashboardLayout from "@/components/dashboard/dashlayout/dashlayout";
 import CodeAnalyzer from "@/components/dashboard/audit/codeAnalyzer";
 import AuditResults from "@/components/dashboard/audit/auditResults";
 import { useToast } from "@/hooks/use-toast";
+import { useAccount, useWalletClient, usePublicClient } from "wagmi";
 import { analyzeContractSecurity } from "../../../../../utils/mistralAI";
 import { keccak256 } from "@ethersproject/keccak256";
 import { toUtf8Bytes } from "@ethersproject/strings";
 import { ethers } from "ethers";
 import useAuditStore from "@/store/auditStore"; // Import the Zustand store
 // ABI of the AuditRegistry contract (import or define it here)
+
 const AUDIT_REGISTRY_ABI = [
   {
     anonymous: false,
@@ -340,6 +342,10 @@ const AuditPage = () => {
 
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
+    const user = useUser();
+        const { isConnected, address, chain } = useAccount();
+        
+  
 
   const { toast } = useToast();
   const {
@@ -419,18 +425,12 @@ const AuditPage = () => {
   };
 
   // Debugging state updates
+  const { data: walletClient } = useWalletClient();
+  const publicClient = usePublicClient();
 
   // Handle audit registration on-chain
   const handleRegisterAudit = async () => {
-    if (!window.ethereum) {
-      toast({
-        title: "No Wallet Detected",
-        description: "Please install MetaMask or another Ethereum wallet.",
-        variant: "destructive",
-      });
-      return;
-    }
-
+    
     if (!contractHash || !auditReport) {
       toast({
         title: "Invalid Input",
@@ -440,88 +440,63 @@ const AuditPage = () => {
       return;
     }
 
-    const Pharos_Devnet_CHAIN_ID = "0xc352"; // Hexadecimal equivalent of 656476
-    const Pharos_Devnet_RPC_URL = "https://devnet.dplabs-internal.com";
-    const Pharos_Devnet_EXPLORER_URL = "https://pharosscan.xyz/";
-
     try {
       setIsRegistering(true);
 
-      // Attempt to switch to the EduChain testnet
-      try {
-        await window.ethereum.request({
-          method: "wallet_switchEthereumChain",
-          params: [{ chainId: Pharos_Devnet_CHAIN_ID }],
+      if (!walletClient || !publicClient) {
+        console.log("walletclient", walletClient);
+        console.log("publicClient", publicClient);
+        toast({
+          title: "Wallet Error",
+          description: "Could not access the embedded wallet. Please try signing in again.",
+          variant: "destructive",
         });
-      } catch (switchError) {
-        // Handle specific error codes
-        if ((switchError as any).code === 4902) {
-          // Network not added, attempt to add it
-          try {
-            await window.ethereum.request({
-              method: "wallet_addEthereumChain",
-              params: [
-                {
-                  chainId: Pharos_Devnet_CHAIN_ID,
-                  chainName: "Pharos Devnet",
-                  rpcUrls: [Pharos_Devnet_RPC_URL],
-                  nativeCurrency: {
-                    name: "Pharos Devnet Token",
-                    symbol: "EDU",
-                    decimals: 18,
-                  },
-                  blockExplorerUrls: [Pharos_Devnet_EXPLORER_URL],
-                },
-              ],
-            });
-          } catch (addError) {
-            // Check if the error is due to the network already being added
-            if ((addError as any).code === -32603) {
-              console.warn("Network is already added. Proceeding...");
-            } else {
-              console.error("Failed to add the Pharos Devnet:", addError);
-              toast({
-                title: "Network Error",
-                description: "Failed to add the Pharos Devnet to your wallet.",
-                variant: "destructive",
-              });
-              return;
-            }
-          }
-        } else {
-          console.error("Failed to switch to the Pharos Devnet:", switchError);
-          toast({
-            title: "Network Error",
-            description: "Failed to switch to the Pharos Devnet.",
-            variant: "destructive",
-          });
-          return;
-        }
+        return;
       }
 
-      // Proceed with registering the audit
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      await provider.send("eth_requestAccounts", []);
-      const signer = await provider.getSigner();
-      const auditRegistry = new ethers.Contract(
-        AUDIT_REGISTRY_ADDRESS,
-        AUDIT_REGISTRY_ABI,
-        signer
-      );
+      // Create contract instance using wagmi's public client and wallet client
+      const contract = {
+        address: AUDIT_REGISTRY_ADDRESS as `0x${string}`,
+        abi: AUDIT_REGISTRY_ABI,
+      };
 
-      const tx = await auditRegistry.registerAudit(
-        contractHash,
-        auditScore, // Convert score to stars (1-5 scale)
-        "ok"
-      );
-      await tx.wait();
+      try {
+        // Prepare and simulate the transaction
+        const { request } = await publicClient.simulateContract({
+          ...contract,
+          functionName: 'registerAudit',
+          args: [contractHash, auditScore, "ok"],
+          account: address,
+        });
 
-      toast({
-        title: "Audit Registered",
-        description: "The audit has been successfully registered on-chain.",
-      });
+        if (!request) {
+          throw new Error("Failed to prepare transaction");
+        }
 
-      setIsLocked(false); // Unlock the results after registration
+        // Send the transaction using the Civic embedded wallet
+        const hash = await walletClient.writeContract(request);
+        console.log("Transaction hash:", hash);
+        
+        // Wait for transaction
+        const receipt = await publicClient.waitForTransactionReceipt({ hash });
+
+        if (receipt.status === 'success') {
+          toast({
+            title: "Audit Registered",
+            description: "The audit has been successfully registered on-chain.",
+          });
+          setIsLocked(false);
+        } else {
+          throw new Error("Transaction failed");
+        }
+      } catch (error) {
+        console.error("Contract interaction error:", error);
+        toast({
+          title: "Transaction Failed",
+          description: "Failed to register the audit on-chain. Please try again.",
+          variant: "destructive",
+        });
+      }
     } catch (error) {
       console.error("Error registering audit:", error);
       toast({

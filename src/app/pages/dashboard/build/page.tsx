@@ -13,7 +13,7 @@ import { useWallet } from "@/hooks/useWallet";
 import useAuditStore from "@/store/auditStore"; // Import the Zustand store
 
 const Dashboard = () => {
-  const { isConnected, address } = useWallet();
+  const { isConnectednormal, address } = useWallet();
   // const { getWalletProfile, isSupabaseConfigured } = useSupabase();
   const [ setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -22,7 +22,7 @@ const Dashboard = () => {
   const { auditScore } = useAuditStore();
 
   useEffect(() => {
-    if (!isConnected) {
+    if (!isConnectednormal) {
       router.push("/");
       return;
     }
@@ -45,9 +45,9 @@ const Dashboard = () => {
     // };
 
     // fetchProfile();
-  }, [isConnected, router, address]); // Update
+  }, [isConnectednormal, router, address]); // Update
 
-  if (!isConnected) {
+  if (!isConnectednormal) {
     return null;
   }
   // Sample data for circular charts

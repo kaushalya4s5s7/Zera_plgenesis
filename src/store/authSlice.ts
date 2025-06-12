@@ -2,14 +2,14 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface WalletState {
   address: string | null;
-  isConnected: boolean;
+  isConnectednormal: boolean;
   isConnecting: boolean;
   error: string | null;
 }
 
 const initialState: WalletState = {
   address: null,
-  isConnected: false,
+  isConnectednormal: false,
   isConnecting: false,
   error: null,
 };
@@ -24,7 +24,7 @@ const walletSlice = createSlice({
     },
     connectWalletSuccess: (state, action: PayloadAction<string>) => {
       state.address = action.payload;
-      state.isConnected = true;
+      state.isConnectednormal = true;
       state.isConnecting = false;
       state.error = null;
     },
@@ -34,7 +34,7 @@ const walletSlice = createSlice({
     },
     disconnectWallet: (state) => {
       state.address = null;
-      state.isConnected = false;
+      state.isConnectednormal = false;
       state.isConnecting = false;
       state.error = null;
     },

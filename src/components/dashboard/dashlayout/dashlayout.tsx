@@ -20,9 +20,9 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       <div className="flex w-full min-h-screen">
         <Sidebar />
 
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col relative z-10">
           <Header />
-          <main className="flex-1 p-6 pt-0">
+          <main className="flex-1 p-6 pt-0 z-0">
             {" "}
             {/* Added pt-0 to remove top padding */}
             <div className="glassmorphic rounded-2xl p-6 min-h-[calc(100vh-7rem)] max-w-[1600px] mx-auto animate-glow">

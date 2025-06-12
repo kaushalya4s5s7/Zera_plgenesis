@@ -8,8 +8,14 @@ import WobbleCardDemo from "@/components/home/WobbleCardDemo";
 import Footer from "@/components/home/footer";
 import FeaturesSectionDemo from "@/components/home/featuresdemo";
 import FeatureCarousel from "@/components/home/FeatureCorousel";
+import Web3Zone from "@/components/home/web3zone";
+import { useAutoConnect } from "@civic/auth-web3/wagmi";
+import CivicWalletManager from "@/components/home/afterLogin";
+import WalletInitializer from "@/components/home/WalletInitializer";
 
 const HomePage = () => {
+    // useAutoConnect();
+  
   // const movingStripItems = [
   //   { text: "SMART CONTRACT AUDIT", color: "text-purple-light" },
   //   { text: "VULNERABILITY DETECTION", color: "text-orange-light" },
@@ -25,6 +31,11 @@ const HomePage = () => {
       <main>
         <Hero />
         <WobbleCardDemo />
+        <CivicWalletManager />
+        {/* <Web3Zone /> */}
+        {/* Uncomment the next line to use the moving strip feature */}
+        {/* <MovingStrip items={movingStripItems} /> */}
+        <WalletInitializer/>
         <FeaturesSectionDemo />
         <Features />
         <FeatureCarousel

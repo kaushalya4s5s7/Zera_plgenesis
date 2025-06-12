@@ -52,7 +52,7 @@ export const useWallet = (useSupabaseIntegration = false) => {
 
   const disconnect = () => {
     dispatch(disconnectWallet());
-    toast.info("Wallet disconnected");
+    toast.info("Wallet disConnectednormal");
   };
 
   const getTruncatedAddress = () => {
@@ -64,7 +64,7 @@ export const useWallet = (useSupabaseIntegration = false) => {
     connect,
     disconnect,
     getTruncatedAddress,
-    isConnected: wallet.isConnected,
+    isConnectednormal: wallet.isConnectednormal,
     isConnecting: wallet.isConnecting || isSavingToSupabase,
     address: wallet.address,
     error: wallet.error,

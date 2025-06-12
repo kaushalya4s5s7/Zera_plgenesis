@@ -7,12 +7,12 @@ const ConnectWalletButton: React.FC = () => {
   const {
     connect,
     disconnect,
-    isConnected,
+    isConnectednormal,
     isConnecting,
     getTruncatedAddress,
   } = useWallet();
 
-  if (isConnected) {
+  if (isConnectednormal) {
     return (
       <div className="flex items-center gap-2">
         <Button

@@ -1,17 +1,41 @@
+"use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import { useAccount, useBalance, useSendTransaction, useChainId } from "wagmi";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useWallet } from "@/hooks/useWallet";
 import ConnectWalletButton from "./connectWalletbutton";
 import DashboardButton from "./dashboardbutton";
+import { UserButton, useUser } from "@civic/auth-web3/react";
+import Link from "next/link";
+import Router, { useRouter } from "next/navigation";
+
+
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const { user, signIn, signOut } = useUser();
+      const router = useRouter();
+
+
   const { toast } = useToast();
-  const { isConnected, error } = useWallet();
+  const { isConnectednormal, error } = useWallet();
+    const [isSigningIn, setIsSigningIn] = useState(false);
+
+  // const { isConnected, address, chain } = useAccount();
+
+  
+const handleSignIn = async () => {
+    setIsSigningIn(true);
+    await signIn();
+          router.push("/pages/dashboard");
+
+  };
+
+
 
   useEffect(() => {
     if (error) {
@@ -23,14 +47,20 @@ const Navbar = () => {
     }
   }, [error, toast]);
 
+  // useEffect(() => {
+  //   if (isConnectednormal) {
+  //     toast({
+  //       title: "Wallet Connected",
+  //       description: "Your wallet has been successfully connected!",
+  //     });
+  //   }
+  // }, [isConnectednormal, toast]);
   useEffect(() => {
-    if (isConnected) {
-      toast({
-        title: "Wallet Connected",
-        description: "Your wallet has been successfully connected!",
-      });
+    if (user) {
+      router.push("/pages/dashboard");
     }
-  }, [isConnected, toast]);
+  }, [user, router]);
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -44,6 +74,19 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+
+   if (isSigningIn || user) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="flex flex-col items-center">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          <p className="mt-4 text-blue-600 font-medium animate-pulse">Logging in...</p>
+        </div>
+      </div>
+    );
+  }
+
 
   return (
     <header
@@ -83,12 +126,31 @@ const Navbar = () => {
         </nav>
 
         <div className="hidden md:flex items-center space-x-4">
-          <div className="text-white hover:bg-white/10">
-            <ConnectWalletButton />
-          </div>
-          <div className="bg-gradient-to-r from-purple to-orange text-white hover:opacity-90">
-            {!isConnected}
-            <DashboardButton />
+          <div className="flex items-center gap-4">
+            {/* Authentication Buttons */}
+            <div className="text-white hover:bg-white/10">
+            {user && (
+        <Link
+          href="/wallet"
+          className="px-6 py-2 rounded-full bg-purple-500 text-white font-bold flex items-center justify-center hover:bg-purple-600 transition-colors">
+          Wallet
+        </Link>
+      )}</div> <button
+          onClick={handleSignIn}
+          className="px-6 py-2 rounded-full bg-purple-500 text-white font-bold flex items-center justify-center hover:bg-purple-600 transition-colors"
+        >
+          Login
+        </button>
+
+            {/* {/* </div>
+            {/* <div className="text-white hover:bg-white/10">
+              <ConnectWalletButton />
+            </div> */}
+            {/* Dashboard Button */}
+            
+            <div> 
+              <DashboardButton />
+            </div>
           </div>
         </div>
 
@@ -100,6 +162,7 @@ const Navbar = () => {
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
       </div>
+      
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (

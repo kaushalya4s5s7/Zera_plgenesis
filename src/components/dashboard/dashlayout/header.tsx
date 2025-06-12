@@ -9,6 +9,9 @@ import {
   Mail,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { UserButton } from "@civic/auth-web3/react";
+import Link from "next/link";
+import DashboardButton from "@/components/home/dashboardbutton";
 
 const Header = () => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -172,69 +175,33 @@ const Header = () => {
           )}
         </div>
 
-        <div className="relative">
-          <button
-            className="flex items-center gap-3 pl-2 hover:bg-white/5 py-1.5 px-2 rounded-lg transition-colors"
-            onClick={toggleProfileMenu}
-            aria-label="User menu"
-          >
-            <div className="w-8 h-8 rounded-full bg-white/20 overflow-hidden flex items-center justify-center text-white font-medium">
-              {user.avatar ? (
-                <img
-                  src={user.avatar}
-                  alt={user.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                user.name.charAt(0)
-              )}
-            </div>
-            <ChevronDown className="w-4 h-4 text-gray-200" />
-          </button>
-
-          {isProfileMenuOpen && (
-            <div className="absolute right-0 mt-2 w-60 bg-slate-900-light border border-white/10 rounded-lg shadow-lg py-2 z-20">
-              <div className="px-4 py-3 border-b border-white/10">
-                <p className="font-medium text-white">{user.name}</p>
-                <p className="text-sm text-gray-400">{user.email}</p>
+       <div className="hidden md:flex items-center space-x-4">
+          <div className="flex items-center gap-4">
+            {/* Authentication Buttons */}
+            <div className="text-white hover:bg-white/10">
+            {user && (
+        <Link
+          href="/wallet"
+          className="px-6 py-2 rounded-full bg-purple-500 text-white font-bold flex items-center justify-center hover:bg-purple-600 transition-colors">
+          Wallet
+        </Link>
+      )}</div><div>
+              <UserButton />
               </div>
-
-              <button
-                className="w-full text-left px-4 py-2 hover:bg-white/5 flex items-center gap-3"
-                onClick={() => handleProfileAction("Profile Settings")}
-              >
-                <User className="w-4 h-4 text-gray-300" />
-                <span className="text-sm text-white">Profile</span>
-              </button>
-
-              <button
-                className="w-full text-left px-4 py-2 hover:bg-white/5 flex items-center gap-3"
-                onClick={() => handleProfileAction("Account Settings")}
-              >
-                <Settings className="w-4 h-4 text-gray-300" />
-                <span className="text-sm text-white">Settings</span>
-              </button>
-
-              <button
-                className="w-full text-left px-4 py-2 hover:bg-white/5 flex items-center gap-3"
-                onClick={() => handleProfileAction("Messages")}
-              >
-                <Mail className="w-4 h-4 text-gray-300" />
-                <span className="text-sm text-white">Messages</span>
-              </button>
-
-              <div className="border-t border-white/10 mt-1 pt-1">
-                <button
-                  className="w-full text-left px-4 py-2 hover:bg-white/5 text-red-400 flex items-center gap-3"
-                  onClick={handleLogout}
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span className="text-sm">Logout</span>
-                </button>
-              </div>
-            </div>
-          )}
+            {/* {/* </div>
+            {/* <div className="text-white hover:bg-white/10">
+              <ConnectWalletButton />
+            </div> */}
+            {/* Dashboard Button */}
+            
+            {/* <div> 
+              <DashboardButton />
+            </div> */}
+          </div>
         </div>
+        
+
+         
       </div>
     </header>
   );
