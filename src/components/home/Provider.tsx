@@ -2,7 +2,7 @@
 
 import { FC, PropsWithChildren } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { CivicAuthProvider } from "@civic/auth-web3/nextjs";
+import { CivicAuthProvider } from "@civic/auth-web3/react";
 import { Chain, http } from "viem";
 import { WagmiProvider, createConfig } from "wagmi";
 import { mainnet, sepolia } from "wagmi/chains";
@@ -38,12 +38,7 @@ const Provider: FC<ProvidersProps> = ({ children }) => {
     <QueryClientProvider client={queryClient}>
       <WagmiProvider config={wagmiConfig}>
         <CivicAuthProvider 
-          config={{ 
-            oauthServer: process.env.NEXT_PUBLIC_AUTH_SERVER || 'http://localhost:3000/api/auth'
-          }}
-          endpoints={{ 
-            wallet: process.env.NEXT_PUBLIC_WALLET_API_BASE_URL || 'http://localhost:3000/api/wallet'
-          }}
+          clientId="7ed6d5cd-300f-415c-bcc0-69c399ec465d"
           initialChain={sepolia}
         >
           {children}

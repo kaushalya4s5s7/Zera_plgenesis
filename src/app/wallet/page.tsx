@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useUser } from "@civic/auth-web3/react";
 import { useAccount, useBalance, useConnect } from "wagmi";
 import { formatEther } from "viem";
@@ -29,7 +29,7 @@ const WalletPage = () => {
   const [showReceiveModal, setShowReceiveModal] = useState(false);
 
   // --- 2. FIXING YOUR `createWallet` and `connectWallet` FUNCTIONS ---
-  const createWallet = async () => {
+  const createWallet =  useCallback(async () => {
     // FIX 1: Use the official `userHasWallet` helper with the userContext object.
     if (userContext.user && !userHasWallet(userContext)) {
       console.log("createWallet function called: Creating wallet...");
@@ -39,7 +39,7 @@ const WalletPage = () => {
       // `useAutoConnect()` will handle it automatically when `userHasWallet` becomes true.
       // Calling it manually can cause race conditions.
     }
-  };
+  }, [userContext, userHasWallet]);
 
   // This function is kept, but it's generally not needed due to useAutoConnect.
   // It's safe to have, but it won't be called in the automatic flow.
