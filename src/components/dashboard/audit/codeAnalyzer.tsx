@@ -41,6 +41,7 @@ const supportedChains = [
   { id: "polygon", name: "Polygon" },
   { id: "arbitrum", name: "Arbitrum" },
   { id: "bsc", name: "BSC" },
+  {id:"Sepolia", name: "Sepolia" },
 ];
 
 type CodeAnalyzerProps = {
@@ -50,7 +51,7 @@ type CodeAnalyzerProps = {
 
 const CodeAnalyzer = ({ onAnalyze, isAnalyzing }: CodeAnalyzerProps) => {
   const [code, setCode] = useState(sampleCode);
-  const [selectedChain, setSelectedChain] = useState("Pharos");
+  const [selectedChain, setSelectedChain] = useState("Sepolia");
   const { toast } = useToast();
 
   const handleAnalyze = () => {

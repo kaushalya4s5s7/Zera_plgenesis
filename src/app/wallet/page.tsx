@@ -1,170 +1,206 @@
-// app/wallet/page.tsx
-
 "use client";
-
-import { useCallback, useEffect, useState } from "react";
 import { useUser } from "@civic/auth-web3/react";
-import { useAccount, useBalance, useConnect } from "wagmi";
-import { formatEther } from "viem";
-import { userHasWallet } from "@civic/auth-web3";
 import { useAutoConnect } from "@civic/auth-web3/wagmi";
+import { useAccount, useBalance, useSendTransaction, useChainId } from "wagmi";
+import { formatEther } from "viem";
+import { useCallback, useState, useEffect, FC } from "react";
+import { userHasWallet } from "@civic/auth-web3";
+import QRCode from "react-qr-code";
 
-const WalletPage = () => {
-  // --- 1. PRESERVING YOUR HOOK STRUCTURE ---
-  const { user, isLoading, walletCreationInProgress } = useUser();
-  // Keep userContext as you had it.
-  const userContext = useUser();
- 
-  const { address, isConnected, chain } = useAccount();
-  const { data: balanceData } = useBalance({
-    address,
-    query: {
-      refetchInterval: 5000,
-      enabled: !!address && isConnected,
-    },
-  });
-  const { connect, connectors } = useConnect();
 
-  const [showSendModal, setShowSendModal] = useState(false);
-  const [showReceiveModal, setShowReceiveModal] = useState(false);
+// Helper function to truncate addresses
+const truncateAddress = (address: string, chars = 4): string => {
+  if (!address) return "";
+  return `${address.substring(0, chars + 2)}...${address.substring(address.length - chars)}`;
+};
 
-  // --- 2. FIXING YOUR `createWallet` and `connectWallet` FUNCTIONS ---
-  const createWallet =  useCallback(async () => {
-    // FIX 1: Use the official `userHasWallet` helper with the userContext object.
-    if (userContext.user && !userHasWallet(userContext)) {
-      console.log("createWallet function called: Creating wallet...");
-      // Call the createWallet function from the context. This is correct.
-      await userContext.createWallet();
-      // NOTE: We do not need to call connectWallet() here.
-      // `useAutoConnect()` will handle it automatically when `userHasWallet` becomes true.
-      // Calling it manually can cause race conditions.
-    }
-  }, [userContext, userHasWallet]);
 
-  // This function is kept, but it's generally not needed due to useAutoConnect.
-  // It's safe to have, but it won't be called in the automatic flow.
-  const connectWallet = () => {
-    if (connectors.length > 0) {
-      console.log("connectWallet function called: Connecting to the first connector (Civic)...");
-      connect({ connector: connectors[0] });
-    }
+// ------------------------------------------
+// 1. The "Radio Box" Presentational Component
+// ------------------------------------------
+interface WalletOptionProps {
+  address: `0x${string}`;
+  balance: string;
+  chainName: string;
+  isSelected: boolean;
+  onSelect: (address: `0x${string}`) => void;
+  disabled?: boolean;
+}
+
+const WalletOption: FC<WalletOptionProps> = ({
+  address,
+  balance,
+  chainName,
+  isSelected,
+  onSelect,
+  disabled = false,
+}) => {
+  const baseClasses = "w-full p-4 border rounded-lg flex items-center gap-4 transition-all duration-200";
+  const stateClasses = isSelected
+    ? "border-blue-500 bg-blue-50 dark:bg-gray-700 shadow-md"
+    : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800";
+  const interactionClasses = disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:border-blue-400";
+ const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
+
+  const copyToClipboard = (address: string): void => {
+    navigator.clipboard.writeText(address);
+    setCopiedAddress(address);
+    setTimeout(() => setCopiedAddress(null), 2000);
+
   };
 
-  // --- 3. FIXING THE `useEffect` LOGIC ---
-  useEffect(() => {
-    // FIX 2: Use the `user` object from the first hook call and the correct `userHasWallet` check.
-    // The `user` object from both hook calls is the same, but this is cleaner.
-    if (user && !userHasWallet(userContext) && !walletCreationInProgress) {
-      console.log("useEffect triggered: User is authenticated but has no wallet. Calling createWallet().");
-      // Call your createWallet function.
-      createWallet();
-    }
-  // The dependency array is correct.
-  }, [user, walletCreationInProgress]); 
-
-  // --- Helper functions are unchanged, they are correct ---
-  const getNetworkAddress = () => address || "N/A";
-  const getNetworkBalance = () => {
-    if (!balanceData) return "0.00 ETH";
-    return `${parseFloat(formatEther(balanceData.value)).toFixed(5)} ${balanceData.symbol}`;
-  };
-  const getNetworkStatus = () => {
-    if (!isConnected || !chain) return "Disconnected";
-    return chain.name;
-  };
-  const getNetworkIcon = () => isConnected ? "🟢" : "🔴";
-
-  // --- RENDER LOGIC ---
-
-  // Initial loading state for the user session
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
-      </div>
-    );
-  }
-
-  // User is not logged in after loading
-  if (!user) {
-    return (
-      <div className="text-center mt-20">
-        <h1 className="text-2xl font-bold">Access Denied</h1>
-        <p className="text-gray-600 mt-2">Please sign in to view your wallet dashboard.</p>
-      </div>
-    );
-  }
-
-  // Main dashboard render
   return (
-    <div>
-      <h1 className="text-3xl font-bold my-8">Wallet Dashboard</h1>
-      <div className="bg-white rounded-lg shadow-lg p-6 space-y-6">
-        {/* User Info Header */}
-        <div className="flex items-center space-x-4">
-          {user.picture && <img src={user.picture} alt="User Avatar" className="w-12 h-12 rounded-full"/>}
-          <div>
-            <h2 className="text-xl font-semibold">Welcome, {user.email}</h2>
-            <p className="text-gray-600">Manage your wallet and assets</p>
-          </div>
-        </div>
-
-        {/* Wallet Creation Status */}
-        {walletCreationInProgress && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <div className="flex items-center space-x-3">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-yellow-500"></div>
-              <p className="text-yellow-700">Creating your wallet, please wait...</p>
-            </div>
-          </div>
-        )}
-
-        {/* --- 4. FIXING THE MAIN WALLET UI CONDITION --- */}
-        {/* The condition should be `isConnected` AND that the user has a wallet. */}
-        {isConnected && userHasWallet(userContext) ? (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <span>{getNetworkIcon()}</span>
-                <span className="text-sm text-gray-600">{getNetworkStatus()}</span>
-              </div>
-            </div>
-            {/* Balance Card and Buttons */}
-            <div className="bg-gray-50 rounded-lg p-4">
-              <h3 className="text-sm font-medium text-gray-500 mb-2">Balance</h3>
-              <p className="text-2xl font-bold">{getNetworkBalance()}</p>
-              <div className="flex space-x-4 mt-4">
-                <button onClick={() => setShowSendModal(true)} className="bg-blue-600 ...">Send</button>
-                <button onClick={() => setShowReceiveModal(true)} className="bg-green-600 ...">Receive</button>
-              </div>
-            </div>
-          </div>
-        ) : (
-          // Add a fallback message for when the wallet exists but wagmi hasn't connected yet
-          !walletCreationInProgress && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
-              <p className="text-blue-700 font-semibold">Finalizing wallet connection...</p>
-            </div>
-          )
-        )}
+    <div
+      onClick={() => !disabled && onSelect(address)}
+      className={`${baseClasses} ${stateClasses} ${interactionClasses}`}
+    >
+      {/* Custom Radio Button Visual */}
+      <div className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-gray-400 dark:border-gray-500">
+        {isSelected && <div className="h-2.5 w-2.5 rounded-full bg-blue-500" />}
       </div>
 
-      {/* Modals are unchanged, they are correct */}
-      {showReceiveModal && (
-        <div className="fixed inset-0 ...">
-          <div className="bg-white ...">
-            <h3 className="text-xl font-bold mb-4">Your Wallet Address</h3>
-            <div className="bg-gray-100 p-4 rounded">
-              <p className="font-mono text-sm break-all">{getNetworkAddress()}</p>
+      <div className="flex-grow text-gray-900 dark:text-white">
+        <div className="font-semibold">{truncateAddress(address)}</div>
+        <div className="flex items-center mt-2 space-x-4">
+              <button
+                onClick={() => copyToClipboard(address)}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none transition-colors w-32 text-center"
+              >
+                {copiedAddress === address ? "Copied!" : "Copy"}
+              </button>
+              <div className="p-1 bg-white border rounded">
+                <QRCode value={address} size={64} />
+              </div>
             </div>
-            <div className="flex justify-end mt-4">
-              <button onClick={() => setShowReceiveModal(false)} className="px-4 ...">Close</button>
-            </div>
-          </div>
+        <div className="text-sm text-gray-600 dark:text-gray-400">
+          {balance} ETH on {chainName}
         </div>
-      )}
+      </div>
     </div>
   );
 };
 
-export default WalletPage;
+// ------------------------------------------
+// 2. The Main Logic Container (replaces Web3U)
+// ------------------------------------------
+function Web3Selector({
+  walletCreationInProgress,
+}: {
+  walletCreationInProgress?: boolean;
+}) {
+  const { isConnected, address, chain } = useAccount();
+  const chainId = useChainId();
+  const user =  useUser();
+  const isLoading = user.isLoading || walletCreationInProgress;
+
+  const [selectedWallet, setSelectedWallet] = useState<`0x${string}` | null>(null);
+  const [recipientAddress, setRecipientAddress] = useState<string>("");
+  const [ethToSend, setEthToSend] = useState<string>("0.001");
+  const [busySendingEth, setBusySendingEth] = useState(false);
+
+  // Get chain info from multiple sources
+  const effectiveChain = chain;
+  const effectiveChainId = chain?.id || chainId;
+
+  // Debug logging
+  useEffect(() => {
+    console.log("Web3Selector Debug Info:", {
+      isConnected, address, chain, chainId, user: user.user, userHasWallet: userHasWallet(user), isLoading,
+    });
+  }, [isConnected, address, chain, chainId, user, isLoading]);
+
+  const ethBalance = useBalance({
+    address,
+    query: { refetchInterval: 3000, enabled: !!address },
+  });
+
+  const formatBalanceEth = (balance: bigint | undefined) => {
+    if (!balance) return (0.0).toFixed(5);
+    return Number.parseFloat(formatEther(balance)).toFixed(5);
+  };
+
+  const { sendTransaction, error: sendTxError } = useSendTransaction();
+
+  const handleSelectWallet = (walletAddress: `0x${string}`) => {
+    // Toggle selection
+    setSelectedWallet(prev => (prev === walletAddress ? null : walletAddress));
+  };
+  
+  const sendEth = useCallback(() => {
+    const amount = parseFloat(ethToSend);
+    if (!amount || !recipientAddress || !selectedWallet) return;
+    setBusySendingEth(true);
+    sendTransaction({
+      to: recipientAddress as `0x${string}`,
+      value: BigInt(amount * 1e18),
+    }, {
+      onSettled: () => setBusySendingEth(false),
+    });
+  }, [recipientAddress, ethToSend, selectedWallet, sendTransaction]);
+
+  // Handle loading and connection states
+  if (isLoading) {
+    return (
+      <div className="text-gray-900 dark:text-white">
+        <div>Connecting wallet. Please wait...</div>
+        {walletCreationInProgress && <div className="text-sm text-gray-600 dark:text-gray-400 mt-2">Creating wallet...</div>}
+      </div>
+    );
+  }
+
+  // Handle not connected state
+  if (!isConnected || !address) {
+     return (
+        <div className="bg-yellow-100 dark:bg-yellow-900 border border-yellow-400 text-yellow-700 dark:text-yellow-300 px-4 py-3 rounded mb-4">
+          Wallet not connected or address not available.
+        </div>
+      );
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* The Radio Box component */}
+      <WalletOption
+        address={address}
+        balance={formatBalanceEth(ethBalance?.data?.value)}
+        chainName={effectiveChain?.name || `Chain ID ${effectiveChainId}` || "Unknown"}
+        isSelected={selectedWallet === address}
+        onSelect={handleSelectWallet}
+        disabled={!effectiveChain && !effectiveChainId}
+      />
+      
+      </div>
+    
+  );
+}
+
+
+// ------------------------------------------
+// 3. The Top-Level Entry Point (Same as before, just renders the new component)
+// ------------------------------------------
+const Web3Zone = () => {
+  const { user, isLoading, walletCreationInProgress } = useUser();
+  useAutoConnect();
+
+  if (!isLoading && !user) {
+    return (
+      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+        <div className="mb-4 text-gray-900 dark:text-white text-center">
+          <h3 className="text-lg font-semibold mb-2">Web3 Wallet Access</h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            Please sign in using the button above to access your embedded wallet and Web3 features.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Render the new selector component
+  return (
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+      <Web3Selector walletCreationInProgress={walletCreationInProgress} />
+    </div>
+  );
+}
+
+export default Web3Zone

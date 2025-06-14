@@ -31,7 +31,7 @@ const HomePage = () => {
       <main>
         <Hero />
         <WobbleCardDemo />
-        <CivicWalletManager />
+        {/* <CivicWalletManager /> */}
         {/* <Web3Zone /> */}
         {/* Uncomment the next line to use the moving strip feature */}
         {/* <MovingStrip items={movingStripItems} /> */}

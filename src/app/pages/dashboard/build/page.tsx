@@ -21,11 +21,11 @@ const Dashboard = () => {
 
   const { auditScore } = useAuditStore();
 
-  useEffect(() => {
-    if (!isConnectednormal) {
-      router.push("/");
-      return;
-    }
+  // useEffect(() => {
+  //   if (!isConnectednormal) {
+  //     router.push("/");
+  //     return;
+  //   }
 
     // // Fetch user profile from Supabase if wallet is connected
     // const fetchProfile = async () => {
@@ -45,11 +45,11 @@ const Dashboard = () => {
     // };
 
     // fetchProfile();
-  }, [isConnectednormal, router, address]); // Update
+  // }, [isConnectednormal, router, address]); // Update
 
-  if (!isConnectednormal) {
-    return null;
-  }
+  // if (!isConnectednormal) {
+  //   return null;
+  // }
   // Sample data for circular charts
   const deploymentData = [
     { name: "Ethereum", value: 45, color: "#8B5CF6" },

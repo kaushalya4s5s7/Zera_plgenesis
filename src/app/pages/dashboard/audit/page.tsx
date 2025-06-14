@@ -6,19 +6,19 @@ declare global {
     ethereum?: any;
   }
 }
+
 import { useUser } from "@civic/auth-web3/react";
-import { useState } from "react";
+import { useAutoConnect } from "@civic/auth-web3/wagmi";
+import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/dashboard/dashlayout/dashlayout";
 import CodeAnalyzer from "@/components/dashboard/audit/codeAnalyzer";
 import AuditResults from "@/components/dashboard/audit/auditResults";
 import { useToast } from "@/hooks/use-toast";
-import { useAccount, useWalletClient, usePublicClient } from "wagmi";
+import { useAccount, useWalletClient, usePublicClient, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { analyzeContractSecurity } from "../../../../../utils/mistralAI";
 import { keccak256 } from "@ethersproject/keccak256";
 import { toUtf8Bytes } from "@ethersproject/strings";
-import { ethers } from "ethers";
-import useAuditStore from "@/store/auditStore"; // Import the Zustand store
-// ABI of the AuditRegistry contract (import or define it here)
+import useAuditStore from "@/store/auditStore";
 
 const AUDIT_REGISTRY_ABI = [
   {
@@ -264,14 +264,14 @@ interface AuditIssue {
   id: string;
   title: string;
   description: string;
-  severity: string; // e.g., "critical", "high", "medium", "low", "info"
-  source: string; // e.g., "Mistral", "Slither", "Mythril"
-  line?: number | null; // Optional line number
-  recommendation?: string; // Optional recommendation
+  severity: string;
+  source: string;
+  line?: number | null;
+  recommendation?: string;
 }
 
-// Address of the deployed AuditRegistry contract
-const AUDIT_REGISTRY_ADDRESS = "0x233912C9FE3198A8CAF8AE493c2C970130cbC8B4";
+const AUDIT_REGISTRY_ADDRESS = "0x49466ba632569a2d9f1919941468F17e287f26dA";
+
 const parseIssuesFromAuditReport = (auditReport: string): AuditIssue[] => {
   const issues: AuditIssue[] = [];
   const lines = auditReport.split("\n");
@@ -280,72 +280,55 @@ const parseIssuesFromAuditReport = (auditReport: string): AuditIssue[] => {
 
   lines.forEach((line) => {
     if (line.startsWith("####")) {
-      // Start of a new issue
       if (currentIssue.id) {
         issues.push(currentIssue as AuditIssue);
       }
+      
       const generateUUID = () => {
-        // Check if crypto.randomUUID is available
-        if (
-          typeof crypto !== "undefined" &&
-          typeof crypto.randomUUID === "function"
-        ) {
+        if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
           return crypto.randomUUID();
         }
-
-        // Fallback implementation
-        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
-          /[xy]/g,
-          function (c) {
-            const r = (Math.random() * 16) | 0;
-            const v = c === "x" ? r : (r & 0x3) | 0x8;
-            return v.toString(16);
-          }
-        );
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+          const r = (Math.random() * 16) | 0;
+          const v = c === "x" ? r : (r & 0x3) | 0x8;
+          return v.toString(16);
+        });
       };
 
-      // Then replace crypto.randomUUID() with generateUUID()
-      // In the parseIssuesFromAuditReport function, change this line:
       currentIssue = {
-        id: generateUUID(), // Replace crypto.randomUUID()
+        id: generateUUID(),
         title: line.replace(/####/, "").trim(),
       };
     } else if (line.startsWith("- **Description**:")) {
-      currentIssue.description = line
-        .replace(/- \*\*Description\*\*:/, "")
-        .trim();
+      currentIssue.description = line.replace(/- \*\*Description\*\*:/, "").trim();
     } else if (line.startsWith("- **Affected Function**:")) {
-      currentIssue.source = line
-        .replace(/- \*\*Affected Function\*\*:/, "")
-        .trim();
+      currentIssue.source = line.replace(/- \*\*Affected Function\*\*:/, "").trim();
     } else if (line.startsWith("- **Mitigation**:")) {
-      currentIssue.recommendation = line
-        .replace(/- \*\*Mitigation\*\*:/, "")
-        .trim();
+      currentIssue.recommendation = line.replace(/- \*\*Mitigation\*\*:/, "").trim();
     } else if (line.startsWith("- **Severity**:")) {
-      currentIssue.severity = line
-        .replace(/- \*\*Severity\*\*:/, "")
-        .trim()
-        .toLowerCase();
+      currentIssue.severity = line.replace(/- \*\*Severity\*\*:/, "").trim().toLowerCase();
     }
   });
 
-  // Push the last issue if it exists
   if (currentIssue.id) {
     issues.push(currentIssue as AuditIssue);
   }
 
   return issues;
 };
+
 const AuditPage = () => {
   const [showResults, setShowResults] = useState(false);
-
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [isRegistering, setIsRegistering] = useState(false);
-    const user = useUser();
-        const { isConnected, address, chain } = useAccount();
-        
   
+  // Use Civic Web3 Auth with auto-connect (following Web3Zone pattern)
+  const { user, isLoading: isUserLoading, walletCreationInProgress } = useUser();
+  useAutoConnect();
+  
+  // Wagmi hooks for wallet interaction (following Web3Zone pattern)
+  const { isConnected, address, chain } = useAccount();
+  const { data: walletClient } = useWalletClient();
+  const publicClient = usePublicClient();
 
   const { toast } = useToast();
   const {
@@ -360,7 +343,67 @@ const AuditPage = () => {
     setIssueCount,
     setIsLocked,
   } = useAuditStore();
-  // Handle code analysis
+
+  // Use wagmi's useWriteContract hook for better transaction handling
+  const { 
+    writeContract, 
+    data: hash, 
+    error: writeError, 
+    isPending: isWritePending 
+  } = useWriteContract();
+
+  // Wait for transaction confirmation
+  const { 
+    isLoading: isConfirming, 
+    isSuccess: isConfirmed, 
+    error: confirmError 
+  } = useWaitForTransactionReceipt({
+    hash,
+  });
+
+  // Debug logging for user state (following Web3Zone pattern)
+  useEffect(() => {
+    console.log("Audit Page Debug Info:", {
+      user,
+      isUserLoading,
+      walletCreationInProgress,
+      isConnected,
+      address,
+      chain,
+    });
+  }, [user, isUserLoading, walletCreationInProgress, isConnected, address, chain]);
+
+  // Handle transaction confirmation
+  useEffect(() => {
+    if (isConfirmed) {
+      toast({
+        title: "Audit Registered",
+        description: "The audit has been successfully registered on-chain!",
+      });
+      setIsLocked(false);
+    }
+  }, [isConfirmed, toast, setIsLocked]);
+
+  // Handle transaction errors
+  useEffect(() => {
+    if (writeError) {
+      console.error("Write contract error:", writeError);
+      toast({
+        title: "Transaction Failed",
+        description: `Failed to register the audit: ${writeError.message}`,
+        variant: "destructive",
+      });
+    }
+    if (confirmError) {
+      console.error("Confirmation error:", confirmError);
+      toast({
+        title: "Confirmation Failed",
+        description: `Transaction confirmation failed: ${confirmError.message}`,
+        variant: "destructive",
+      });
+    }
+  }, [writeError, confirmError, toast]);
+
   const handleAnalyze = async (code: string, chain: string) => {
     if (!code.trim()) {
       toast({
@@ -387,11 +430,9 @@ const AuditPage = () => {
       const uniqueHash = generateUniqueHash();
       setContractHash(uniqueHash);
 
-      const parsedIssues: AuditIssue[] =
-        parseIssuesFromAuditReport(auditResults);
+      const parsedIssues: AuditIssue[] = parseIssuesFromAuditReport(auditResults);
       setIssues(parsedIssues);
 
-      // Calculate issue counts and score
       const lowerReport = auditResults.toLowerCase();
       const critical = (lowerReport.match(/critical/g) || []).length;
       const high = (lowerReport.match(/high/g) || []).length;
@@ -424,13 +465,7 @@ const AuditPage = () => {
     }
   };
 
-  // Debugging state updates
-  const { data: walletClient } = useWalletClient();
-  const publicClient = usePublicClient();
-
-  // Handle audit registration on-chain
   const handleRegisterAudit = async () => {
-    
     if (!contractHash || !auditReport) {
       toast({
         title: "Invalid Input",
@@ -440,74 +475,108 @@ const AuditPage = () => {
       return;
     }
 
+    // Check if user is loaded and authenticated (following Web3Zone pattern)
+    if (isUserLoading || walletCreationInProgress) {
+      toast({
+        title: "Loading",
+        description: "Please wait while we load your user information.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in with Civic Auth to register audits.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Check if wallet is connected (following Web3Zone pattern)
+    if (!isConnected || !address) {
+      toast({
+        title: "Wallet Not Connected",
+        description: "Please ensure your embedded wallet is connected. Try refreshing the page.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
-      setIsRegistering(true);
+      console.log("Registering audit with:", {
+        address,
+        contractHash,
+        auditScore,
+        isConnected,
+      });
 
-      if (!walletClient || !publicClient) {
-        console.log("walletclient", walletClient);
-        console.log("publicClient", publicClient);
-        toast({
-          title: "Wallet Error",
-          description: "Could not access the embedded wallet. Please try signing in again.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Create contract instance using wagmi's public client and wallet client
-      const contract = {
-        address: AUDIT_REGISTRY_ADDRESS as `0x${string}`,
-        abi: AUDIT_REGISTRY_ABI,
-      };
+      // Use wagmi's writeContract hook (similar to Web3Zone's sendTransaction pattern)
+      
 
       try {
-        // Prepare and simulate the transaction
-        const { request } = await publicClient.simulateContract({
-          ...contract,
-          functionName: 'registerAudit',
-          args: [contractHash, auditScore, "ok"],
-          account: address,
-        });
+        writeContract({
+        address: AUDIT_REGISTRY_ADDRESS as `0x${string}`,
+        abi: AUDIT_REGISTRY_ABI,
+        functionName: 'registerAudit',
+        args: [contractHash, auditScore, "Audit completed successfully"],
+      });
+  // your transaction call
+} catch (error: any) {
+  if (typeof error === 'object' && error !== null && 'data' in error) {
+    console.error("Error data:", error.data);
+  } else {
+    console.error("Generic error:", error);
+  }
+}
 
-        if (!request) {
-          throw new Error("Failed to prepare transaction");
-        }
 
-        // Send the transaction using the Civic embedded wallet
-        const hash = await walletClient.writeContract(request);
-        console.log("Transaction hash:", hash);
-        
-        // Wait for transaction
-        const receipt = await publicClient.waitForTransactionReceipt({ hash });
+      toast({
+        title: "Transaction Submitted",
+        description: "Your audit registration transaction has been submitted. Waiting for confirmation...",
+      });
 
-        if (receipt.status === 'success') {
-          toast({
-            title: "Audit Registered",
-            description: "The audit has been successfully registered on-chain.",
-          });
-          setIsLocked(false);
-        } else {
-          throw new Error("Transaction failed");
-        }
-      } catch (error) {
-        console.error("Contract interaction error:", error);
-        toast({
-          title: "Transaction Failed",
-          description: "Failed to register the audit on-chain. Please try again.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error registering audit:", error);
       toast({
         title: "Error",
-        description: "Failed to register the audit on-chain.",
+        description: `Failed to register the audit: ${error.message || "Unknown error"}`,
         variant: "destructive",
       });
-    } finally {
-      setIsRegistering(false);
     }
   };
+
+  // Show loading state while user is being loaded (following Web3Zone pattern)
+  if (isUserLoading || walletCreationInProgress) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="text-white">
+            {walletCreationInProgress ? "Creating wallet..." : "Loading user information..."}
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  // Show sign-in prompt if user is not authenticated (following Web3Zone pattern)
+  if (!user) {
+    return (
+      <DashboardLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg text-center">
+            <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
+              Authentication Required
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              Please sign in using the button above to access audit features and register audits on-chain.
+            </p>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -516,6 +585,17 @@ const AuditPage = () => {
         <p className="text-gray-300">
           Analyze your smart contracts for vulnerabilities and security issues.
         </p>
+        
+        {/* Debug info - remove in production */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mt-4 p-4 bg-gray-800 rounded text-sm text-gray-300">
+            <p>Debug Info:</p>
+            <p>User: {user ? 'Authenticated' : 'Not authenticated'}</p>
+            <p>Wallet Connected: {isConnected ? 'Yes' : 'No'}</p>
+            <p>Address: {address || 'None'}</p>
+            <p>Chain: {chain?.name || 'None'}</p>
+          </div>
+        )}
       </div>
 
       <CodeAnalyzer onAnalyze={handleAnalyze} isAnalyzing={isAnalyzing} />
@@ -531,22 +611,38 @@ const AuditPage = () => {
               <p className="text-gray-300 mb-6">
                 To unlock the audit results, please register the audit on-chain.
               </p>
+
+              {!isConnected && (
+                <p className="text-yellow-400 mb-4">
+                  Your embedded wallet is being initialized. Please wait...
+                </p>
+              )}
+
               <button
                 onClick={handleRegisterAudit}
-                disabled={isRegistering}
-                className="px-6 py-2 rounded-lg bg-primary text-white hover:bg-primary/80 transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                disabled={isWritePending || isConfirming || !isConnected}
+                className="px-6 py-2 rounded-lg bg-primary text-white hover:bg-primary/80 transition-colors flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed mx-auto"
               >
-                {isRegistering ? (
+                {isWritePending ? (
                   <>
                     <span className="animate-spin">↻</span>
-                    <span>Registering...</span>
+                    <span>Submitting...</span>
+                  </>
+                ) : isConfirming ? (
+                  <>
+                    <span className="animate-spin">↻</span>
+                    <span>Confirming...</span>
                   </>
                 ) : (
-                  <>
-                    <span>Register Audit</span>
-                  </>
+                  <span>Register Audit</span>
                 )}
               </button>
+
+              {hash && (
+                <div className="mt-4 text-sm text-gray-400">
+                  <p>Transaction Hash: {hash}</p>
+                </div>
+              )}
             </div>
           )}
 

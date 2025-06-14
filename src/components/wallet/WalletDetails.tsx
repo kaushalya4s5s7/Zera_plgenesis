@@ -5,7 +5,7 @@
 import { useEffect, useState } from 'react';
 import { useUser } from '@civic/auth-web3/react';
 import { useBalance } from 'wagmi';
-import { mainnet } from 'wagmi/chains';
+import { sepolia } from 'wagmi/chains';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { formatEther } from 'viem'; // Best practice for formatting ETH balance
 
@@ -45,9 +45,13 @@ const WalletDetails = (): React.ReactElement => {
   // Use optional chaining for safe access.
   const ethereumAddress = user?.ethereum?.address;
 
+  // Debug: Log wallet info
+  console.log("WalletDetails - Civic user:", user);
+  console.log("WalletDetails - Ethereum address:", ethereumAddress);
+
   const { data: ethBalanceData, isLoading: isEthBalanceLoading } = useBalance({
     address: ethereumAddress,
-    chainId: mainnet.id,
+    chainId: sepolia.id,
     query: {
       enabled: !!ethereumAddress,
       refetchInterval: 5000,
@@ -66,6 +70,9 @@ const WalletDetails = (): React.ReactElement => {
           const balance = await solanaConnection.getBalance(publicKey);
           setSolanaBalance(balance / 10 ** 9); // SOL has 9 decimal places
           setSolanaAddress(publicKey.toString());
+          // Debug: Log Solana wallet info
+          console.log("WalletDetails - Solana publicKey:", publicKey.toString());
+          console.log("WalletDetails - Solana balance:", balance / 10 ** 9);
         } catch (error) {
           console.error("Failed to fetch Solana balance:", error);
         }

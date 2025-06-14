@@ -40,10 +40,14 @@ const Provider: FC<ProvidersProps> = ({ children }) => {
         <CivicAuthProvider 
           clientId="7ed6d5cd-300f-415c-bcc0-69c399ec465d"
           initialChain={sepolia}
-        >
+
+        >      
+
           {children}
+                
+
         </CivicAuthProvider>
-      </WagmiProvider>
+        </WagmiProvider>
     </QueryClientProvider>
   );
 };

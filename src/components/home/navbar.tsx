@@ -31,10 +31,15 @@ const Navbar = () => {
 const handleSignIn = async () => {
     setIsSigningIn(true);
     await signIn();
-          router.push("/pages/dashboard");
-
+          // router.push will trigger useEffect below
   };
 
+  useEffect(() => {
+    if (user) {
+     console.log("User is logged in:", user);
+      router.push("/pages/dashboard");
+    }
+  }, [user, router]);
 
 
   useEffect(() => {
@@ -55,11 +60,12 @@ const handleSignIn = async () => {
   //     });
   //   }
   // }, [isConnectednormal, toast]);
-  useEffect(() => {
-    if (user) {
-      router.push("/pages/dashboard");
-    }
-  }, [user, router]);
+  // useEffect(() => {
+  //   if (user) {
+  //     console.log("User is logged in:", user);
+  //     router.push("/ pages/dashboard");
+  //   }
+  // }, [router,user]);
 
 
   useEffect(() => {
@@ -76,7 +82,7 @@ const handleSignIn = async () => {
   }, []);
 
 
-   if (isSigningIn || user) {
+   if (isSigningIn || !user) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="flex flex-col items-center">
@@ -135,12 +141,7 @@ const handleSignIn = async () => {
           className="px-6 py-2 rounded-full bg-purple-500 text-white font-bold flex items-center justify-center hover:bg-purple-600 transition-colors">
           Wallet
         </Link>
-      )}</div> <button
-          onClick={handleSignIn}
-          className="px-6 py-2 rounded-full bg-purple-500 text-white font-bold flex items-center justify-center hover:bg-purple-600 transition-colors"
-        >
-          Login
-        </button>
+      )}</div> <UserButton/>
 
             {/* {/* </div>
             {/* <div className="text-white hover:bg-white/10">
@@ -196,12 +197,7 @@ const handleSignIn = async () => {
             >
               Pricing
             </a>
-            <Button
-              variant="ghost"
-              className="justify-start text-white hover:bg-white/10 w-full"
-            >
-              Sign In
-            </Button>
+            <UserButton/>
             <Button className="bg-gradient-to-r from-purple to-orange text-white hover:opacity-90 w-full">
               Start Free Trial
             </Button>
