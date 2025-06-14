@@ -1,6 +1,11 @@
 # ⚡ Zera: Revolutionizing Smart Contract Security
 
-Zera is an AI-powered platform that makes smart contract development faster, safer, and audit-ready. It solves the biggest pain in Web3: manual, error-prone contract coding and costly security breaches—by automating development, embedding audits, and securing user access through smart embedded wallets powered by Civic’s Web3 SDK, enabling seamless, civic authentication and transaction signing without requiring users to manage private keys.
+Zera is an **AI-powered platform** that makes **smart contract development** faster, safer, and **audit-ready**.  
+it solves the biggest pain in **Web3**: manual, error-prone **contract coding** and costly **security breaches** —  
+by **automating development**, **embedding audits**, and **securing user access** through **smart embedded wallets**  
+powered by **Civic’s Web3 SDK**, enabling seamless, **civic authentication** and **transaction signing**  
+without requiring users to manage **private keys**.
+
 ---
 
 ## 🚀 Key Features
