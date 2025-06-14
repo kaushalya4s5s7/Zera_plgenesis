@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { ethers } from "ethers";
+import { useAccount, useChainId, usePublicClient } from "wagmi";
+import { formatEther } from "viem";
 import {
   ChevronLeft,
   ChevronRight,
@@ -7,6 +8,8 @@ import {
   Filter,
   ExternalLink,
   Check,
+  Wallet,
+  AlertCircle,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -22,6 +25,12 @@ type DataTableProps = {
   className?: string;
 };
 
+// Helper function to truncate addresses (matching Web3Zone pattern)
+const truncateAddress = (address: string, chars = 4): string => {
+  if (!address) return "";
+  return `${address.substring(0, chars + 2)}...${address.substring(address.length - chars)}`;
+};
+
 const DataTable = ({ className }: DataTableProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -29,109 +38,136 @@ const DataTable = ({ className }: DataTableProps) => {
   const [chainFilter, setChainFilter] = useState<string | null>(null);
   const [auditorFilter, setAuditorFilter] = useState<string | null>(null);
   const [ratingRange, setRatingRange] = useState({ min: 0, max: 100 });
+  const [isLoading, setIsLoading] = useState(false);
   const itemsPerPage = 5;
   const { toast } = useToast();
 
+  // Wagmi hooks (matching Web3Zone pattern)
+  const { isConnected, address, chain } = useAccount();
+  const chainId = useChainId();
+  const publicClient = usePublicClient();
+  
   const { contracts, setContracts } = useAuditStore();
 
-  // Initialize Ethers provider and contract instance
-  // ...existing imports...
+  // Get effective chain info (matching Web3Zone pattern)
+  const effectiveChain = chain;
+  const effectiveChainId = chain?.id || chainId;
 
-  // Add error handling and logging for contract calls
+  // Debug logging (matching Web3Zone pattern)
+  useEffect(() => {
+    console.log("DataTable Debug Info:", {
+      isConnected,
+      address,
+      chain,
+      chainId,
+      effectiveChainId,
+      publicClient: !!publicClient,
+    });
+  }, [isConnected, address, chain, chainId, effectiveChainId, publicClient]);
+
+  // Fetch contract data using wagmi
   useEffect(() => {
     const fetchData = async () => {
-      if (window.ethereum) {
-        try {
-          const provider = new ethers.BrowserProvider(window.ethereum);
-          await provider.send("eth_requestAccounts", []);
-          const network = await provider.getNetwork();
-          const chainId = Number(network.chainId);
+      if (!isConnected || !publicClient || !effectiveChain) {
+        return;
+      }
 
-          if (chainId !== CHAIN_CONFIG.Pharos.chainId) {
-            toast({
-              title: "Wrong Network",
-              description: "Please switch to Pharos Test Network",
-              variant: "destructive",
-            });
-            return;
-          }
-          const signer = await provider.getSigner();
+      try {
+        setIsLoading(true);
 
-          // Log contract address and network
-          const contractAddress =
-            CONTRACT_ADDRESSES[network.name as ChainKey] ||
-            CONTRACT_ADDRESSES.Pharos;
-
-          const auditRegistry = new ethers.Contract(
-            contractAddress,
-            AUDIT_REGISTRY_ABI,
-            signer
-          );
-
-          try {
-            // Verify contract exists
-            const code = await provider.getCode(contractAddress);
-
-            if (code === "0x") {
-              throw new Error("No contract deployed at this address");
-            }
-
-            // Get total contracts with better error handling
-            const totalContracts = await auditRegistry.getTotalContracts();
-
-            const allAudits = [];
-            const total = Number(totalContracts);
-
-            for (let i = 0; i < total; i++) {
-              try {
-                const hash = await auditRegistry.getContractHashByIndex(i);
-                const audit = await auditRegistry.getLatestAudit(hash);
-
-                allAudits.unshift({
-                  id: i + 1,
-                  name: `Contract ${i}`,
-                  chain: "Pharos",
-                  rating: Number(audit.stars),
-                  auditor: audit.auditor,
-                  date: new Date(
-                    Number(audit.timestamp) * 1000
-                  ).toLocaleDateString(),
-                });
-              } catch (error) {
-                console.error(`Error fetching audit ${i}:`, error);
-                continue;
-              }
-            }
-            setContracts(allAudits);
-          } catch (error) {
-            console.error("Contract call error:", error);
-            toast({
-              title: "Contract Error",
-              description:
-                "Failed to read from the smart contract. Please verify the contract address and network.",
-              variant: "destructive",
-            });
-          }
-        } catch (error) {
-          console.error("Provider/Signer error:", error);
+        // Check if we're on the correct network
+        if (effectiveChainId !== CHAIN_CONFIG.Sepolia.chainId) {
           toast({
-            title: "Wallet Error",
-            description:
-              "Failed to connect to your wallet. Please check your connection and network.",
+            title: "Wrong Network",
+            description: "Please switch to Pharos Test Network",
             variant: "destructive",
           });
+          return;
         }
-      } else {
+
+        // Get contract address for current chain
+        const contractAddress =
+          CONTRACT_ADDRESSES[effectiveChain.name as ChainKey] ||
+          CONTRACT_ADDRESSES.Pharos;
+
+        if (!contractAddress) {
+          throw new Error("Contract address not found for current chain");
+        }
+
+        // Verify contract exists using publicClient
+        const code = await publicClient.getBytecode({
+          address: contractAddress as `0x${string}`,
+        });
+
+        if (!code || code === "0x") {
+          throw new Error("No contract deployed at this address");
+        }
+
+        // Read total contracts using publicClient
+        const totalContracts = await publicClient.readContract({
+          address: contractAddress as `0x${string}`,
+          abi: AUDIT_REGISTRY_ABI,
+          functionName: "getTotalContracts",
+        });
+
+        const allAudits = [];
+        const total = Number(totalContracts);
+
+        for (let i = 0; i < total; i++) {
+          try {
+            // Get contract hash by index
+            const hash = await publicClient.readContract({
+              address: contractAddress as `0x${string}`,
+              abi: AUDIT_REGISTRY_ABI,
+              functionName: "getContractHashByIndex",
+              args: [BigInt(i)],
+            });
+
+            // Get latest audit for this hash
+            const audit = await publicClient.readContract({
+              address: contractAddress as `0x${string}`,
+              abi: AUDIT_REGISTRY_ABI,
+              functionName: "getLatestAudit",
+              args: [hash],
+            });
+
+            allAudits.unshift({
+              id: i + 1,
+              name: `Contract ${i}`,
+              chain: effectiveChain.name || "Unknown",
+              rating: Number(audit.stars),
+              auditor: truncateAddress(audit.auditor),
+              auditorFull: audit.auditor,
+              date: new Date(Number(audit.timestamp) * 1000).toLocaleDateString(),
+              contractHash: hash,
+            });
+          } catch (error) {
+            console.error(`Error fetching audit ${i}:`, error);
+            continue;
+          }
+        }
+
+        setContracts(allAudits);
+        
         toast({
-          title: "No Wallet Detected",
-          description: "Please install MetaMask or another Ethereum wallet.",
+          title: "Data Loaded",
+          description: `Successfully loaded ${allAudits.length} contract reports`,
+        });
+
+      } catch (error) {
+        console.error("Contract call error:", error);
+        toast({
+          title: "Contract Error",
+          description: error instanceof Error ? error.message : "Failed to read from the smart contract",
           variant: "destructive",
         });
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchData();
-  }, [toast]);
+  }, [isConnected, publicClient, effectiveChain, effectiveChainId, toast, setContracts]);
 
   // Helper function to determine the color based on rating
   const getRatingColor = (rating: number) => {
@@ -146,19 +182,26 @@ const DataTable = ({ className }: DataTableProps) => {
     const matchesSearch =
       contract.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       contract.chain.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      contract.auditor.toLowerCase().includes(searchTerm.toLowerCase());
+      contract.auditor.toLowerCase().includes(searchTerm.toLowerCase()) ;
+      // contract.auditorFull?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesChainFilter = !chainFilter || contract.chain === chainFilter;
-    const matchesAuditorFilter =
-      !auditorFilter || contract.auditor === auditorFilter;
+    // const matchesAuditorFilter =
+    //   !auditorFilter || 
+    //   contract.auditor === auditorFilter || 
+    //   contract.auditorFull === auditorFilter;
     const matchesRatingRange =
       contract.rating >= ratingRange.min && contract.rating <= ratingRange.max;
     return (
       matchesSearch &&
       matchesChainFilter &&
-      matchesAuditorFilter &&
+      // matchesAuditorFilter &&
       matchesRatingRange
     );
   });
+
+  // Get unique chains and auditors for filters
+  const uniqueChains = [...new Set(contracts.map(c => c.chain))];
+  const uniqueAuditors = [...new Set(contracts.map(c =>  c.auditor))];
 
   // Calculate pagination
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -198,13 +241,48 @@ const DataTable = ({ className }: DataTableProps) => {
     });
   };
 
+  // Render connection status (matching Web3Zone pattern)
+  if (!isConnected || !address) {
+    return (
+      <div className={`bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6 ${className}`}>
+        <div className="text-center py-8">
+          <Wallet className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+          <h3 className="text-lg font-semibold text-white mb-2">Wallet Not Connected</h3>
+          <p className="text-gray-400">
+            Please connect your wallet to view contract reports.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // Render loading state
+  if (isLoading) {
+    return (
+      <div className={`bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6 ${className}`}>
+        <div className="text-center py-8">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <h3 className="text-lg font-semibold text-white mb-2">Loading Contract Reports</h3>
+          <p className="text-gray-400">
+            Fetching data from the blockchain...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       className={`bg-white/10 backdrop-blur border border-white/20 rounded-xl p-6 ${className}`}
     >
-      {/* Header */}
+      {/* Header with connection info */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-        <h3 className="text-lg font-semibold text-white">Contract Reports</h3>
+        <div>
+          <h3 className="text-lg font-semibold text-white">Contract Reports</h3>
+          <p className="text-sm text-gray-400">
+            Connected: {truncateAddress(address)} on {effectiveChain?.name || 'Unknown Chain'}
+          </p>
+        </div>
         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
           <div className="relative">
             <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
@@ -241,7 +319,9 @@ const DataTable = ({ className }: DataTableProps) => {
                       onChange={(e) => setChainFilter(e.target.value || null)}
                     >
                       <option value="">All Chains</option>
-                      {/* Dynamically populate chains */}
+                      {uniqueChains.map(chain => (
+                        <option key={chain} value={chain}>{chain}</option>
+                      ))}
                     </select>
                   </div>
                   {/* Auditor Filter */}
@@ -255,7 +335,11 @@ const DataTable = ({ className }: DataTableProps) => {
                       onChange={(e) => setAuditorFilter(e.target.value || null)}
                     >
                       <option value="">All Auditors</option>
-                      {/* Dynamically populate auditors */}
+                      {uniqueAuditors.map(auditor => (
+                        <option key={auditor} value={auditor}>
+                          {truncateAddress(auditor)}
+                        </option>
+                      ))}
                     </select>
                   </div>
                   {/* Rating Range */}
@@ -263,32 +347,34 @@ const DataTable = ({ className }: DataTableProps) => {
                     <label className="block text-xs text-gray-400 mb-1">
                       Rating Range: {ratingRange.min} - {ratingRange.max}
                     </label>
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={ratingRange.min}
-                      onChange={(e) =>
-                        setRatingRange({
-                          ...ratingRange,
-                          min: parseInt(e.target.value),
-                        })
-                      }
-                      className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer"
-                    />
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      value={ratingRange.max}
-                      onChange={(e) =>
-                        setRatingRange({
-                          ...ratingRange,
-                          max: parseInt(e.target.value),
-                        })
-                      }
-                      className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer"
-                    />
+                    <div className="space-y-2">
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={ratingRange.min}
+                        onChange={(e) =>
+                          setRatingRange({
+                            ...ratingRange,
+                            min: parseInt(e.target.value),
+                          })
+                        }
+                        className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer"
+                      />
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={ratingRange.max}
+                        onChange={(e) =>
+                          setRatingRange({
+                            ...ratingRange,
+                            max: parseInt(e.target.value),
+                          })
+                        }
+                        className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer"
+                      />
+                    </div>
                   </div>
                   {/* Action Buttons */}
                   <div className="flex justify-between">
@@ -311,6 +397,16 @@ const DataTable = ({ className }: DataTableProps) => {
           </div>
         </div>
       </div>
+
+      {/* Network Warning */}
+      {effectiveChainId !== CHAIN_CONFIG.Sepolia.chainId && (
+        <div className="mb-4 p-3 bg-orange-500/10 border border-orange-500/20 rounded-lg flex items-center gap-2">
+          <AlertCircle className="w-4 h-4 text-orange-400" />
+          <span className="text-orange-400 text-sm">
+            Please switch to Sepolia network to view contract reports
+          </span>
+        </div>
+      )}
 
       {/* Table */}
       <div className="overflow-x-auto">
@@ -339,7 +435,11 @@ const DataTable = ({ className }: DataTableProps) => {
                   <td className="px-6 py-4 font-medium text-white">
                     {contract.name}
                   </td>
-                  <td className="px-6 py-4">{contract.chain}</td>
+                  <td className="px-6 py-4">
+                    <span className="px-2 py-1 bg-white/10 rounded-full text-xs">
+                      {contract.chain}
+                    </span>
+                  </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
                       <div className="w-16 h-2 rounded-full bg-white/10">
@@ -353,19 +453,28 @@ const DataTable = ({ className }: DataTableProps) => {
                       <span>{contract.rating}%</span>
                     </div>
                   </td>
-                  <td className="px-6 py-4">{contract.auditor}</td>
+                  <td className="px-6 py-4">
+                    <span 
+                      className="text-primary hover:text-primary/80 cursor-pointer"
+                      
+                    >
+                      {contract.auditor}
+                    </span>
+                  </td>
                   <td className="px-6 py-4">{contract.date}</td>
                   <td className="px-6 py-4">
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleViewReport(contract.id)}
                         className="p-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                        title="View Report"
                       >
                         <ExternalLink className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => handleApproveReport(contract.id)}
-                        className="p-1.5 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
+                        className="p-1.5 rounded-lg bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors"
+                        title="Approve Report"
                       >
                         <Check className="w-4 h-4" />
                       </button>
@@ -376,7 +485,7 @@ const DataTable = ({ className }: DataTableProps) => {
             ) : (
               <tr>
                 <td colSpan={6} className="px-6 py-8 text-center text-gray-400">
-                  No reports match your search criteria
+                  {contracts.length === 0 ? "No contract reports found" : "No reports match your search criteria"}
                 </td>
               </tr>
             )}
