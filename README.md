@@ -1,7 +1,6 @@
 # ⚡ Zera: Revolutionizing Smart Contract Security
 
-**Zera** is a powerful AI-powered platform designed to streamline and secure smart contract development. In a world where smart contracts manage billions of dollars and security breaches cost millions, Zera is built to deliver **intelligent automation**, **comprehensive auditing**, and **secure contract development** — all in one platform.
-
+Zera is an AI-powered platform that makes smart contract development faster, safer, and audit-ready. It solves the biggest pain in Web3: manual, error-prone contract coding and costly security breaches—by automating development, embedding audits, and securing user access through smart embedded wallets powered by Civic’s Web3 SDK, enabling seamless, civic authentication and transaction signing without requiring users to manage private keys.
 ---
 
 ## 🚀 Key Features
@@ -31,8 +30,7 @@ Smart contracts power DeFi, NFTs, DAOs — yet they remain vulnerable. From the 
 - Preventing exploits before deployment  
 - Speeding up development cycles  
 - Empowering devs with test-driven, secure coding practices  
-- Running on the **fast, low-cost Pharos Chain**
-
+-Running on the Currently Supports All Evm Compatible chains , Could be increased to other chains on user demand
 ---
 
 ## 🌐 Platform Workflow
@@ -57,16 +55,23 @@ Everything is stored and processed securely — no manual intervention required.
 - **Testing**: Hardhat, Foundry, Truffle
 - **Frontend**: React/Next.js
 - **Security**: Automated audits & vulnerability scans
-- **Blockchain**: Smart Contract deployed on  Pharos devnet ( address:0x233912C9FE3198A8CAF8AE493c2C970130cbC8B4 )
+- **Blockchain**: Smart Contract deployed on  Sepolia Testnet ( address:0x49466ba632569a2d9f1919941468F17e287f26dA )
 - **AI**: Mistral LLM API
 
 ---
+🚀 Future Enhancements
+To further elevate Zera’s security capabilities, we plan to integrate industry-leading static analysis tools like Slither and Mythril. These tools will run in parallel with Zera’s AI engine, enabling multi-layered vulnerability detection. By combining:
+🔍 Slither (for static code analysis and common vulnerability patterns),
+🛡️ Mythril (for symbolic execution and deeper logic flaws),
+🤖 Zera AI (for contextual, real-time recommendations and fixes),
+Zera will deliver the most comprehensive smart contract auditing experience—automated, intelligent, and trustless. This synergy ensures that developers receive the best possible security insights from both human-crafted tools and machine intelligence.–
+
 
 ## 🔧 Getting Started
 
 ### 📥 Installation
 ```bash
-git clone https://github.com/kaushalya4s5s7/Zera_.git
+git clone https://github.com/kaushalya4s5s7/Zera_civicAuth.git
 
 ```
 Run:
@@ -79,7 +84,7 @@ npm run dev
 Have questions or need support?
 
 📩 Email: zeraaihelp@gmail.com
-🌐 Visit: [zera-ai-pharos.onrender.com](https://zera-eulu.onrender.com)
+🌐 Visit: [ https://zera-civicauth.onrender.com]( https://zera-civicauth.onrender.com)
 
 📢 Contributing
 We welcome community collaboration!
