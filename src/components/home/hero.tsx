@@ -85,12 +85,13 @@ const Hero = () => {
                   <div className="flex items-start gap-4 bg-white/5 p-4 rounded-lg">
                     <Zap className="text-purple mt-1" size={24} />
                     <div>
-                      <h3 className="font-bold text-white">
-                        Secure Deployment
-                      </h3>
-                      <p className="text-white/70 font-medium">
-                        Deploy with confidence across multiple blockchains
-                      </p>
+                     <h3 className="font-bold text-white">
+  Generating onChain Verified Reports
+</h3>
+<p className="text-white/70 font-medium">
+  Create immutable, transparent audit records directly on the blockchain
+</p>
+
                     </div>
                   </div>
                 </div>

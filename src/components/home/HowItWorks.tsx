@@ -119,14 +119,13 @@ const HowItWorks = () => {
                   Deploy Securely
                 </h3>
                 <p className="text-white/80 mb-4">
-                  After comprehensive testing and auditing, deploy your smart
-                  contracts with confidence using our secure deployment tools.
+                  After comprehensive testing and auditing, create onchain reports with confidence using our secure deployment tools.
                 </p>
                 <ul className="space-y-2">
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="h-5 w-5 text-purple" />
                     <span className="text-white/70">
-                      Multi-chain deployment
+                      Multi-chain verified Reports
                     </span>
                   </li>
                   <li className="flex items-center gap-2">

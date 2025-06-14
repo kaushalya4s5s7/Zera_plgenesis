@@ -80,9 +80,8 @@ const Features = () => {
     },
     {
       icon: <Lock className="h-8 w-8" />,
-      title: "Secure Deployment",
-      description:
-        "Safe deployment across multiple blockchains with pre-deployment checks.",
+      title: "Generating onChain reports",
+      description: "Generate immutable on-chain audit reports to ensure transparency and trust in smart contract deployments.",
       animation: "animate-slide-in-left",
       delay: "delay-[400ms]",
       color: "text-purple",
