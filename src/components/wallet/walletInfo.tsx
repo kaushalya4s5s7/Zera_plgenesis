@@ -2,16 +2,66 @@
 
 "use client";
 
-import { useUser } from "@civic/auth-web3/react";
+import { useUser, useWallet } from "@civic/auth-web3/react";
 import { useState, useEffect, FC } from "react";
 import { useAccount, useBalance, useChainId } from "wagmi";
 import { formatEther } from "viem";
+import { clusterApiUrl, Connection, PublicKey } from "@solana/web3.js";
 import QRCode from "react-qr-code";
 
 interface Wallet {
   address: string;
   type?: string;
 }
+
+// Custom hook for Solana connection
+const useConnection = () => {
+  const [connection, setConnection] = useState<Connection | null>(null);
+  
+  useEffect(() => {
+    const con = new Connection(clusterApiUrl("devnet"));
+    setConnection(con);
+  }, []);
+  
+  return { connection };
+};
+
+// Custom hook for Solana balance
+const useSolanaBalance = (address: string | null) => {
+  const [balance, setBalance] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
+  const { connection } = useConnection();
+
+  useEffect(() => {
+    if (!connection || !address) {
+      setBalance(null);
+      return;
+    }
+
+    const fetchBalance = async () => {
+      try {
+        setLoading(true);
+        const publicKey = new PublicKey(address);
+        const balanceInLamports = await connection.getBalance(publicKey);
+        setBalance(balanceInLamports);
+      } catch (error) {
+        console.error("Error fetching Solana balance:", error);
+        setBalance(0);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBalance();
+
+    // Set up polling for balance updates
+    const interval = setInterval(fetchBalance, 10000); // Update every 10 seconds
+    
+    return () => clearInterval(interval);
+  }, [connection, address]);
+
+  return { balance, loading };
+};
 
 const truncateAddress = (address: string, chars = 4): string => {
   if (!address) return "";
@@ -26,6 +76,7 @@ interface WalletOptionProps {
   onSelect: (address: string) => void;
   disabled?: boolean;
   walletType: "ethereum" | "solana";
+  loading?: boolean;
 }
 
 const WalletOption: FC<WalletOptionProps> = ({
@@ -36,6 +87,7 @@ const WalletOption: FC<WalletOptionProps> = ({
   onSelect,
   disabled = false,
   walletType,
+  loading = false,
 }) => {
   const baseClasses = "w-full p-4 border rounded-lg flex items-center gap-4 transition-all duration-200 mb-4";
   const stateClasses = isSelected
@@ -80,7 +132,14 @@ const WalletOption: FC<WalletOptionProps> = ({
           </div>
         </div>
         <div className="text-sm text-gray-600 dark:text-gray-400">
-          {balance} {walletType === "ethereum" ? "ETH" : "SOL"} on {chainName}
+          {loading ? (
+            <span className="flex items-center gap-2">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+              Loading...
+            </span>
+          ) : (
+            `${balance} ${walletType === "ethereum" ? "ETH" : "SOL"} on ${chainName}`
+          )}
         </div>
       </div>
     </div>
@@ -101,6 +160,9 @@ const WalletInfo = (): React.ReactElement | null => {
   const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
   const chainId = useChainId();
   const { isConnected, address, chain } = useAccount();
+  
+  // Get Solana wallet address using useWallet hook
+  const { address: solanaWalletAddress } = useWallet({ type: "solana" });
 
   const effectiveChain = chain;
   const effectiveChainId = chain?.id || chainId;
@@ -114,6 +176,7 @@ const WalletInfo = (): React.ReactElement | null => {
   ].filter(Boolean) as string[];
 
   const solanaAddresses = [
+    solanaWalletAddress, // Connected Solana wallet from useWallet hook
     user?.wallets?.find(w => w.type === "solana")?.address,
     user?.solana?.address,
     user?.wallets?.find(w => w.address && !w.address.startsWith("0x"))?.address,
@@ -134,8 +197,31 @@ const WalletInfo = (): React.ReactElement | null => {
     return Number.parseFloat(formatEther(balance)).toFixed(5);
   };
 
+  const formatBalanceSol = (balance: number | null) => {
+    if (balance === null || balance === undefined) return "0.00000";
+    return (balance / 1e9).toFixed(5); // Convert lamports to SOL
+  };
+
   const handleSelectWallet = (walletAddress: string) => {
     setSelectedWallet(prev => (prev === walletAddress ? null : walletAddress));
+  };
+
+  // Create a component for each Solana wallet option to use hooks properly
+  const SolanaWalletOption: FC<{ address: string }> = ({ address }) => {
+    const { balance, loading } = useSolanaBalance(address);
+    
+    return (
+      <WalletOption
+        address={address}
+        balance={formatBalanceSol(balance)}
+        chainName="Solana Devnet"
+        isSelected={selectedWallet === address}
+        onSelect={handleSelectWallet}
+        disabled={false}
+        walletType="solana"
+        loading={loading}
+      />
+    );
   };
 
   useEffect(() => {
@@ -143,8 +229,9 @@ const WalletInfo = (): React.ReactElement | null => {
       console.log("User wallets:", user.wallets);
       console.log("Ethereum address:", user.ethereum?.address);
       console.log("Solana address:", user.solana?.address);
+      console.log("Connected Solana wallet:", solanaWalletAddress);
     }
-  }, [user]);
+  }, [user, solanaWalletAddress]);
 
   if (!user) {
     return (
@@ -178,6 +265,7 @@ const WalletInfo = (): React.ReactElement | null => {
               onSelect={handleSelectWallet}
               disabled={false}
               walletType="ethereum"
+              loading={ethBalance.isLoading && ethAddress === address}
             />
           ))
         ) : (
@@ -190,15 +278,9 @@ const WalletInfo = (): React.ReactElement | null => {
         <h3 className="text-lg font-medium text-gray-800 mb-4">Solana Wallets</h3>
         {uniqueSolanaAddresses.length > 0 ? (
           uniqueSolanaAddresses.map((solAddress) => (
-            <WalletOption
+            <SolanaWalletOption
               key={solAddress}
               address={solAddress}
-              balance="0.00000" // You'd need to implement Solana balance fetching
-              chainName="Solana"
-              isSelected={selectedWallet === solAddress}
-              onSelect={handleSelectWallet}
-              disabled={false}
-              walletType="solana"
             />
           ))
         ) : (
@@ -211,6 +293,9 @@ const WalletInfo = (): React.ReactElement | null => {
         <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
           <p className="text-sm font-medium text-green-800">
             Selected Wallet: {truncateAddress(selectedWallet)}
+          </p>
+          <p className="text-xs text-green-600 mt-1">
+            Type: {selectedWallet.startsWith("0x") ? "Ethereum" : "Solana"}
           </p>
         </div>
       )}

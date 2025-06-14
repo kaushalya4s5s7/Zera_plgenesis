@@ -17,9 +17,8 @@ import Router, { useRouter } from "next/navigation";
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const { user, signIn, signOut } = useUser();
+    const { user, isLoading,signIn, signOut } = useUser();
       const router = useRouter();
-
 
   const { toast } = useToast();
   const { isConnectednormal, error } = useWallet();
@@ -82,7 +81,7 @@ const handleSignIn = async () => {
   }, []);
 
 
-   if (isSigningIn ) {
+   if ( isLoading && !user) {
     return (
       <div className="flex items-center justify-center h-screen">
         <div className="flex flex-col items-center">
