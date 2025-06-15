@@ -281,6 +281,7 @@ const WalletInfo = (): React.ReactElement | null => {
             <SolanaWalletOption
               key={solAddress}
               address={solAddress}
+              
             />
           ))
         ) : (

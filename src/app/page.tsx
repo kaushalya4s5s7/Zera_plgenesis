@@ -42,11 +42,11 @@ const HomePage = () => {
           title="How Zera Works"
           description="All in one Solution"
           image={{
-            step1light1: "./auditor.PNG",
-            step1light2: "./builder.PNG",
-            step2light1: "./Testor.PNG",
-            step3light: "./auditor.PNG",
-            step4light: "./builder.PNG",
+            step1light1: "/auditor.PNG",
+            step1light2: "/builder.PNG",
+            step2light1: "/Testor.PNG",
+            step3light: "/auditor.PNG",
+            step4light: "/builder.PNG",
             alt: "Feature showcase",
           }}
         />

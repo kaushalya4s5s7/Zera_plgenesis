@@ -267,10 +267,11 @@ const StepImage = forwardRef<
   ) => {
     return (
       <Image
+      src={src}
         ref={ref}
         alt={alt}
         className={className}
-        src={src}
+        
         width={width}
         height={height}
         style={{

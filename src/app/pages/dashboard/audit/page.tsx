@@ -586,18 +586,7 @@ const AuditPage = () => {
           Analyze your smart contracts for vulnerabilities and security issues.
         </p>
         
-        {/* Debug info - remove in production */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="mt-4 p-4 bg-gray-800 rounded text-sm text-gray-300">
-            <p>Debug Info:</p>
-            <p>User: {user ? 'Authenticated' : 'Not authenticated'}</p>
-            <p>Wallet Connected: {isConnected ? 'Yes' : 'No'}</p>
-            <p>Address: {address || 'None'}</p>
-            <p>Chain: {chain?.name || 'None'}</p>
-          </div>
-        )}
-      </div>
-
+       </div>
       <CodeAnalyzer onAnalyze={handleAnalyze} isAnalyzing={isAnalyzing} />
 
       {showResults && (

@@ -13,6 +13,6 @@ export const config = {
     * - pages/dashboard (protected route)
     * - wallet (now also excluded from protection)
     */
-    '/((?!_next|favicon.ico|sitemap.xml|robots.txt|.*\\.jpg|.*\\.png|.*\\.svg|.*\\.gif|pages/dashboard|wallet).*)',
+    '/((?!_next|favicon.ico|sitemap.xml|robots.txt|.*\\.jpg|.*\\.png|.*\\.svg|.*\\.gif|pages/dashboard|wallet|codeblock.PNG|auditor.PNG|builder.PNG|Testor.PNG|auditor.PNG|builder.PNG).*)',
   ],
 }

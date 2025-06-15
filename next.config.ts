@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   },
   images: {
     unoptimized: true,
-    domains: ["images.unsplash.com", "assets.aceternity.com"],
+    domains: ["images.unsplash.com", "assets.aceternity.com","img.freepik.com"],
     remotePatterns: [
       {
         protocol: "https",
