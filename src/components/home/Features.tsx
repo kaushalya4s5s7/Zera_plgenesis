@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { Shield, Search, Code2, Zap, Lock, Server } from "lucide-react";
+import { Wallet } from "lucide-react";
+
 
 // Feature interface for better type checking
 interface Feature {
@@ -57,7 +59,16 @@ const Features = () => {
       delay: "delay-[100ms]",
       color: "text-orange",
       hoverEffect: "hover:shadow-[0_0_25px_rgba(249,115,22,0.4)]",
-    },
+    },{
+  icon: <Wallet className="h-8 w-8" />,
+  title: "Civic Embedded Wallet",
+  description:
+    "Seamlessly authenticate users and manage wallets across EVM and Solana using Civic's embedded wallet SDK.",
+  animation: "animate-slide-in-left",
+  delay: "delay-[100ms]",
+  color: "text-blue-600",
+  hoverEffect: "hover:shadow-[0_0_25px_rgba(37,99,235,0.4)]",
+},
     {
       icon: <Code2 className="h-8 w-8" />,
       title: "Code Optimization",

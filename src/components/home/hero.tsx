@@ -15,8 +15,8 @@ const Hero = () => {
 
             <p className="text-xl md:text-2xl text-white/80 max-w-lg font-medium">
               All-in-one platform for Web3 contract auditing, testing, and
-              deployment. Protect your blockchain projects from vulnerabilities
-              with advanced security tools.
+              deployment. Protect your Account & blockchain projects from vulnerabilities
+              with Zera & Civic Smart Wallet.
             </p>
 
             <div className="flex flex-wrap gap-4">
