@@ -39,7 +39,7 @@ Smart contracts power DeFi, NFTs, DAOs — yet they remain vulnerable. From the 
 ---
 
 ## 🌐 Platform Workflow
-![image]([https://github.com/user-attachments/assets/2a1abd28-e248-42cc-9539-123ba50f27c3](https://github.com/kaushalya4s5s7/Zera_civicAuth/blob/main/Untitled-2025-06-06-1233.excalidraw.png?raw=true))
+![image](https://github.com/user-attachments/assets/2a1abd28-e248-42cc-9539-123ba50f27c3)
 
 1. **Connect Wallet**
 2. **Generate Contracts** using AI prompts
