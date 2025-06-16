@@ -49,7 +49,7 @@ Smart contracts power DeFi, NFTs, DAOs — yet they remain vulnerable. From the 
 6. **Auto-generate Documentation** for transparency
 
 Everything is stored and processed securely — no manual intervention required.
-[![image][(https://github.com/kaushalya4s5s7/Zera_civicAuth/blob/main/Untitled-2025-06-06-1233.excalidraw.png?raw=true)]
+[![image](https://github.com/kaushalya4s5s7/Zera_civicAuth/blob/main/Untitled-2025-06-06-1233.excalidraw.png?raw=true)
 
 ---
 
