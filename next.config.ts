@@ -3,9 +3,7 @@ import { createCivicAuthPlugin } from "@civic/auth/nextjs";
 
 
 const nextConfig: NextConfig = {
-  env: {
-    MISTRAL_API_KEY: process.env.MISTRAL_API_KEY,
-  },
+ 
   images: {
     unoptimized: true,
     domains: ["images.unsplash.com", "assets.aceternity.com","img.freepik.com"],
