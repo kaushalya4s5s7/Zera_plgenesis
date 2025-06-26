@@ -4,9 +4,7 @@
   "outputDirectory": ".next",
   "cleanUrls": true,
   "trailingSlash": false,
-  "env": {
-    "MISTRAL_API_KEY": "@MISTRAL_API_KEY"
-  },
+  
   "headers": [
     {
       "source": "/(.*)",
