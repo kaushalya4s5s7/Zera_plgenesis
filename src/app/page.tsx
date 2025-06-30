@@ -1,17 +1,17 @@
 "use client";
 
-import Navbar from "@/components/home/navbar";
-import Hero from "@/components/home/hero";
-import Features from "@/components/home/Features";
-import CTA from "@/components/home/CTA";
-import WobbleCardDemo from "@/components/home/WobbleCardDemo";
-import Footer from "@/components/home/footer";
-import FeaturesSectionDemo from "@/components/home/featuresdemo";
-import FeatureCarousel from "@/components/home/FeatureCorousel";
-import Web3Zone from "@/components/home/web3zone";
+import Navbar from "@/src/components/home/navbar";
+import Hero from "@/src/components/home/hero";
+import Features from "@/src/components/home/Features";
+import CTA from "@/src/components/home/CTA";
+import WobbleCardDemo from "@/src/components/home/WobbleCardDemo";
+import Footer from "@/src/components/home/footer";
+import FeaturesSectionDemo from "@/src/components/home/featuresdemo";
+import FeatureCarousel from "@/src/components/home/FeatureCorousel";
+import Web3Zone from "@/src/components/home/web3zone";
 import { useAutoConnect } from "@civic/auth-web3/wagmi";
-import CivicWalletManager from "@/components/home/afterLogin";
-import WalletInitializer from "@/components/home/WalletInitializer";
+import CivicWalletManager from "@/src/components/home/afterLogin";
+import WalletInitializer from "@/src/components/home/WalletInitializer";
 
 const HomePage = () => {
     // useAutoConnect();

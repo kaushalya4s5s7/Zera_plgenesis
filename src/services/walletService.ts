@@ -1,10 +1,10 @@
 import { ethers } from "ethers";
-import { store } from "@/store/authStore";
+import { store } from "@/src/store/authStore";
 import {
   connectWallet,
   connectWalletSuccess,
   connectWalletFailure,
-} from "@/store/authSlice";
+} from "@/src/store/authSlice";
 
 export const connectMetamask = async (saveToSupabase = false) => {
   try {

@@ -21,7 +21,7 @@ import {
 } from "motion/react";
 import Balancer from "react-wrap-balancer";
 
-import { cn } from "@/lib/utils";
+import { cn } from "@/src/lib/utils";
 
 // Types
 type WrapperStyle = MotionStyle & {

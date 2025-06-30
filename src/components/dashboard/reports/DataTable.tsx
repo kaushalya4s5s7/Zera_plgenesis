@@ -11,7 +11,7 @@ import {
   Wallet,
   AlertCircle,
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/src/hooks/use-toast";
 import {
   CONTRACT_ADDRESSES,
   AUDIT_REGISTRY_ABI,
@@ -19,7 +19,7 @@ import {
   type ChainKey,
 } from "../../../../utils/Contract";
 
-import useAuditStore from "@/store/auditStore";
+import useAuditStore from "@/src/store/auditStore";
 
 type DataTableProps = {
   className?: string;

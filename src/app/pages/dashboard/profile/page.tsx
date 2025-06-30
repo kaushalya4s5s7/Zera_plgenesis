@@ -4,8 +4,11 @@
 
 import { useEffect, useState } from "react";
 import { useUser } from "@civic/auth-web3/react";
-import WalletInfo from "@/components/wallet/walletInfo"; // Import the WalletInfo component
+import { useBalances } from "@/src/hooks/useBalances";
+import { useAccount } from "wagmi";
+import WalletInfo from "@/src/components/wallet/walletInfo"; // Import the WalletInfo component
 import Image from "next/image"; // Use Next.js Image component for optimization
+import { StorageManager } from "@/src/components/dashboard/audit/StorageManager";
 
 // FIX 1: Define our own types for the expected user object structure.
 // This ensures we don't rely on a non-existent export from the library.
@@ -29,6 +32,10 @@ interface CivicUser extends UserProfile {
 
 const ProfilePage = (): React.ReactElement | null => {
   const { user, isLoading } = useUser();
+    const { isConnected, chainId } = useAccount();
+      const { data: balances, isLoading: isLoadingBalances } = useBalances();
+
+
   const [showWallet, setShowWallet] = useState<boolean>(false);
 
   useEffect(() => {
@@ -59,7 +66,15 @@ const ProfilePage = (): React.ReactElement | null => {
   return (
     <section className="bg-gradient-to-t from-blue-50 to-white min-h-screen flex flex-col items-center py-10 px-4">
       {/* Profile Header */}
+
       <div className="text-center mb-8">
+        <div>
+          <h1 className="text-[#e9ac00] hover:underline cursor-pointer">  your balance:
+          {isLoadingBalances || !isConnected
+            ? "..."
+            : balances?.usdfcBalanceFormatted.toFixed(1) + " $"}
+      </h1>
+      </div>
         <h3 className="text-3xl font-bold text-gray-800 mb-1">My Profile</h3>
         <p className="text-gray-500 text-sm">Manage your account and wallet details</p>
       </div>
@@ -102,6 +117,7 @@ const ProfilePage = (): React.ReactElement | null => {
       {/* Wallet Modal */}
       {showWallet && (
         <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          
           <div className="bg-white rounded-xl p-6 w-[90%] max-w-md shadow-2xl relative">
             <button
               onClick={() => setShowWallet(false)}
@@ -114,8 +130,11 @@ const ProfilePage = (): React.ReactElement | null => {
             {/* WalletInfo will receive the correctly typed user object via context */}
             <WalletInfo />
           </div>
+
         </div>
+      
       )}
+      <div><StorageManager/></div>
     </section>
   );
 };

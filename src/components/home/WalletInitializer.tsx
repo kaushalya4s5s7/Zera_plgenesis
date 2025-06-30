@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { userHasWallet } from "@civic/auth-web3";
 import { useUser } from "@civic/auth-web3/react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/src/hooks/use-toast";
 
 const WalletInitializer = () => {
   const userContext = useUser();

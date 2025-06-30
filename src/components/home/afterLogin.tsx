@@ -2,7 +2,7 @@
 "use client";
 import { useEffect,useCallback } from "react";
 import { useUser } from "@civic/auth-web3/react";
-import { useToast } from "@/hooks/use-toast"; 
+import { useToast } from "@/src/hooks/use-toast"; 
 import { userHasWallet } from "@civic/auth-web3";
 
 const CivicWalletManager =  () => {

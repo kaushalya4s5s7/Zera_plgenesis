@@ -2,7 +2,7 @@
 import { ReactNode } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./header";
-import GradientBackground from "@/components/home/Gradient";
+import GradientBackground from "@/src/components/home/Gradient";
 
 type DashboardLayoutProps = {
   children: ReactNode;

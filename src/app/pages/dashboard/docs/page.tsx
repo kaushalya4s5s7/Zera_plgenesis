@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
-import DashboardLayout from "@/components/dashboard/dashlayout/dashlayout";
-import SplitPanel from "@/components/dashboard/documentor/SplitPanel";
-import { useToast } from "@/hooks/use-toast";
+import DashboardLayout from "@/src/components/dashboard/dashlayout/dashlayout";
+import SplitPanel from "@/src/components/dashboard/documentor/SplitPanel";
+import { useToast } from "@/src/hooks/use-toast";
 import { Loader2, Sparkles } from "lucide-react";
 import { generateContractDocumentation } from "../../../../../utils/mistralAI";
 

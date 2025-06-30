@@ -1,5 +1,5 @@
 "use client";
-
+import { Save } from "lucide-react";
 // Extend the Window interface to include the ethereum property
 declare global {
   interface Window {
@@ -10,15 +10,16 @@ declare global {
 import { useUser } from "@civic/auth-web3/react";
 import { useAutoConnect } from "@civic/auth-web3/wagmi";
 import { useState, useEffect } from "react";
-import DashboardLayout from "@/components/dashboard/dashlayout/dashlayout";
-import CodeAnalyzer from "@/components/dashboard/audit/codeAnalyzer";
-import AuditResults from "@/components/dashboard/audit/auditResults";
-import { useToast } from "@/hooks/use-toast";
+import DashboardLayout from "@/src/components/dashboard/dashlayout/dashlayout";
+import CodeAnalyzer from "@/src/components/dashboard/audit/codeAnalyzer";
+import AuditResults from "@/src/components/dashboard/audit/auditResults";
+import { useToast } from "@/src/hooks/use-toast";
 import { useAccount, useWalletClient, usePublicClient, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { analyzeContractSecurity } from "../../../../../utils/mistralAI";
 import { keccak256 } from "@ethersproject/keccak256";
 import { toUtf8Bytes } from "@ethersproject/strings";
-import useAuditStore from "@/store/auditStore";
+import useAuditStore from "@/src/store/auditStore";
+
 
 const AUDIT_REGISTRY_ABI = [
   {
@@ -336,6 +337,8 @@ const AuditPage = () => {
     auditReport,
     contractHash,
     isLocked,
+    issues,
+    issueCount,
     setAuditScore,
     setAuditReport,
     setContractHash,
@@ -404,6 +407,23 @@ const AuditPage = () => {
     }
   }, [writeError, confirmError, toast]);
 
+  const convertAuditResultsToBuffer = async (data: any): Promise<Uint8Array> => {
+  // 1. Convert data to a JSON string
+  const jsonString = JSON.stringify(data, null, 2);
+
+  // 2. Create a Blob
+  const blob = new Blob([jsonString], { type: "application/json" });
+
+  // 3. Convert Blob to ArrayBuffer
+  const arrayBuffer = await blob.arrayBuffer();
+
+  // 4. Convert ArrayBuffer to Uint8Array
+  return new Uint8Array(arrayBuffer);
+};
+
+
+
+
   const handleAnalyze = async (code: string, chain: string) => {
     if (!code.trim()) {
       toast({
@@ -416,9 +436,16 @@ const AuditPage = () => {
 
     setIsAnalyzing(true);
 
+
+
+
+
     try {
       const auditResults = await analyzeContractSecurity(code, chain);
       setAuditReport(auditResults);
+          // const uint8Array = await convertAuditResultsToBuffer(auditResults);
+
+      
 
       const generateUniqueHash = () => {
         const timestamp = Date.now().toString();
@@ -636,7 +663,7 @@ const AuditPage = () => {
           )}
 
           {/* Audit Results */}
-          {!isLocked && <AuditResults />}
+          {!isLocked && <AuditResults/> }
         </div>
       )}
     </DashboardLayout>

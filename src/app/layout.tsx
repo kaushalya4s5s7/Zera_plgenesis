@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Providers from "@/components/home/Providers";
-import  Provider  from "@/components/home/Provider";
+import Providers from "@/src/components/home/Providers";
+import  Provider  from "@/src/components/home/Provider";
 import { CivicAuthProvider } from "@civic/auth-web3/react";
 
 

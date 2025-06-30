@@ -1,27 +1,33 @@
 "use client";
+
 import { useUser } from "@civic/auth-web3/react";
+import type { Chain } from 'viem';
+
 import { useAutoConnect } from "@civic/auth-web3/wagmi";
-import { useAccount, useBalance, useSendTransaction, useChainId } from "wagmi";
-import { formatEther } from "viem";
-import { useCallback, useState, useEffect, FC } from "react";
-import { userHasWallet } from "@civic/auth-web3";
+import {
+  useAccount,
+  useBalance,
+  useSendTransaction,
+  useChainId,
+  useConfig,
+  useSwitchChain,
+  useReadContracts,
+} from "wagmi";
+import { erc20Abi, formatEther } from "viem";
+import { useCallback, useState, FC } from "react";
+// import { userHasWallet } from "@civic/auth-web3"; // Not used in the provided code, can be removed if not needed elsewhere
 import QRCode from "react-qr-code";
+import { SupportedChainId, tokensByChain } from "@/utils/tokes"; // Ensure this path is correct
 
-
-// Helper function to truncate addresses
 const truncateAddress = (address: string, chars = 4): string => {
-  if (!address) return "";
-  return `${address.substring(0, chars + 2)}...${address.substring(address.length - chars)}`;
+  return `${address.slice(0, chars + 2)}...${address.slice(-chars)}`;
 };
 
-
-// ------------------------------------------
-// 1. The "Radio Box" Presentational Component
-// ------------------------------------------
 interface WalletOptionProps {
   address: `0x${string}`;
   balance: string;
   chainName: string;
+   nativeCurrencySymbol: string;
   isSelected: boolean;
   onSelect: (address: `0x${string}`) => void;
   disabled?: boolean;
@@ -31,22 +37,26 @@ const WalletOption: FC<WalletOptionProps> = ({
   address,
   balance,
   chainName,
+  nativeCurrencySymbol,
   isSelected,
   onSelect,
   disabled = false,
 }) => {
-  const baseClasses = "w-full p-4 border rounded-lg flex items-center gap-4 transition-all duration-200";
+  const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
+
+  const baseClasses =
+    "w-full p-4 border rounded-lg flex items-center gap-4 transition-all duration-200";
   const stateClasses = isSelected
     ? "border-blue-500 bg-blue-50 dark:bg-gray-700 shadow-md"
     : "border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800";
-  const interactionClasses = disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:border-blue-400";
- const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
+  const interactionClasses = disabled
+    ? "opacity-50 cursor-not-allowed"
+    : "cursor-pointer hover:border-blue-400";
 
-  const copyToClipboard = (address: string): void => {
+  const copyToClipboard = () => {
     navigator.clipboard.writeText(address);
     setCopiedAddress(address);
     setTimeout(() => setCopiedAddress(null), 2000);
-
   };
 
   return (
@@ -54,7 +64,6 @@ const WalletOption: FC<WalletOptionProps> = ({
       onClick={() => !disabled && onSelect(address)}
       className={`${baseClasses} ${stateClasses} ${interactionClasses}`}
     >
-      {/* Custom Radio Button Visual */}
       <div className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-gray-400 dark:border-gray-500">
         {isSelected && <div className="h-2.5 w-2.5 rounded-full bg-blue-500" />}
       </div>
@@ -62,52 +71,108 @@ const WalletOption: FC<WalletOptionProps> = ({
       <div className="flex-grow text-gray-900 dark:text-white">
         <div className="font-semibold">{truncateAddress(address)}</div>
         <div className="flex items-center mt-2 space-x-4">
-              <button
-                onClick={() => copyToClipboard(address)}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none transition-colors w-32 text-center"
-              >
-                {copiedAddress === address ? "Copied!" : "Copy"}
-              </button>
-              <div className="p-1 bg-white border rounded">
-                <QRCode value={address} size={64} />
-              </div>
-            </div>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              copyToClipboard();
+            }}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 w-32"
+          >
+            {copiedAddress === address ? "Copied!" : "Copy"}
+          </button>
+          <div className="p-1 bg-white border rounded">
+            <QRCode value={address} size={64} />
+          </div>
+        </div>
         <div className="text-sm text-gray-600 dark:text-gray-400">
-          {balance} ETH on {chainName}
+          {balance} {nativeCurrencySymbol} on {chainName}
         </div>
       </div>
     </div>
   );
 };
 
-// ------------------------------------------
-// 2. The Main Logic Container (replaces Web3U)
-// ------------------------------------------
-function Web3Selector({
-  walletCreationInProgress,
-}: {
-  walletCreationInProgress?: boolean;
-}) {
-  const { isConnected, address, chain } = useAccount();
+const TokenBalances: FC<{ address: `0x${string}`; chain: Chain }> = ({ address, chain }) => {
+  // IMPORTANT: Ensure chain.id is cast to SupportedChainId to match your map
+  const tokens = tokensByChain[chain.id as SupportedChainId] || [];
+
+  const contracts = tokens.map((token) => ({
+    abi: erc20Abi,
+    address: token.address as `0x${string}`, // Ensure address is correctly typed as 0x${string}
+    functionName: "balanceOf",
+    args: [address],
+    chainId: chain.id, // Explicitly pass chainId for each contract call
+  }));
+
+  const { data, isLoading: tokensLoading, error: tokensError } = useReadContracts({
+    contracts: contracts.length > 0 ? contracts : [], // Ensure empty array if no tokens, but contracts already handles this
+    allowFailure: true,
+    query: { refetchInterval: 6000, enabled: !!address && tokens.length > 0 }, // Only enable if address and tokens exist
+  });
+
+  // Debugging logs - Keep these while troubleshooting
+  console.log(`[TokenBalances for Chain ${chain.name} (ID: ${chain.id})]`);
+  console.log("Tokens for this chain:", tokens);
+  console.log("Contracts array sent to useReadContracts:", contracts);
+  console.log("Tokens Data (from useReadContracts):", data);
+  console.log("Tokens Loading:", tokensLoading);
+  console.log("Tokens Error:", tokensError);
+
+  if (!tokens.length) {
+    return null; // Don't render if no tokens are defined for this chain
+  }
+
+  return (
+    <div className="text-sm mt-4 border-t pt-4 border-gray-300 dark:border-gray-600">
+      <div className="font-medium text-gray-800 dark:text-white mb-1">
+        {chain.name} Token Balances:
+      </div>
+      {tokensLoading && <div className="text-gray-500">Loading token balances...</div>}
+      {tokensError && <div className="text-red-500">Error fetching token balances: {tokensError.message}</div>}
+      {!tokensLoading && !tokensError && (!data || data.length === 0) && (
+        <div className="text-gray-500">No token data available.</div>
+      )}
+      {!tokensLoading && !tokensError && data && data.length > 0 && tokens.map((token, i) => {
+        const contractResult = data?.[i];
+        const balance = contractResult?.result ?? BigInt(0);
+        const formatted = Number(balance) / 10 ** token.decimals;
+
+        // More granular logging for each token result
+        console.log(`  - ${token.symbol} (${token.address}):`);
+        console.log(`    Raw Result: ${contractResult?.result}`);
+        console.log(`    Status: ${contractResult?.status}`); // 'success' or 'failure'
+        console.log(`    Error: ${contractResult?.error?.message}`); // If status is 'failure'
+
+        return (
+          <div key={token.address} className="flex justify-between text-gray-700 dark:text-gray-300">
+            <span>{token.symbol}</span>
+            <span>{formatted.toFixed(4)}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+function Web3Selector({ walletCreationInProgress }: { walletCreationInProgress?: boolean }) {
+  const { isConnected, address, chain: currentChain } = useAccount();
   const chainId = useChainId();
-  const user =  useUser();
+  const user = useUser();
   const isLoading = user.isLoading || walletCreationInProgress;
+
+  const { chains } = useConfig(); // These are the chains configured in your wagmi.config.ts
+  const { switchChain } = useSwitchChain();
 
   const [selectedWallet, setSelectedWallet] = useState<`0x${string}` | null>(null);
   const [recipientAddress, setRecipientAddress] = useState<string>("");
   const [ethToSend, setEthToSend] = useState<string>("0.001");
   const [busySendingEth, setBusySendingEth] = useState(false);
 
-  // Get chain info from multiple sources
-  const effectiveChain = chain;
-  const effectiveChainId = chain?.id || chainId;
-
-  // Debug logging
-  useEffect(() => {
-    console.log("Web3Selector Debug Info:", {
-      isConnected, address, chain, chainId, user: user.user, userHasWallet: userHasWallet(user), isLoading,
-    });
-  }, [isConnected, address, chain, chainId, user, isLoading]);
+  // Consider if effectiveChain/effectiveChainId is always reliable or if currentChain is sufficient.
+  // effectiveChain is currentChain, effectiveChainId is currentChain.id or wagmi's chainId hook.
+  // For most cases, currentChain will be set if connected.
+  const effectiveChain = currentChain;
+  const effectiveChainId = currentChain?.id || chainId;
 
   const ethBalance = useBalance({
     address,
@@ -115,69 +180,99 @@ function Web3Selector({
   });
 
   const formatBalanceEth = (balance: bigint | undefined) => {
-    if (!balance) return (0.0).toFixed(5);
+    if (!balance) return "0.00000";
     return Number.parseFloat(formatEther(balance)).toFixed(5);
   };
 
-  const { sendTransaction, error: sendTxError } = useSendTransaction();
+  const { sendTransaction } = useSendTransaction();
 
   const handleSelectWallet = (walletAddress: `0x${string}`) => {
-    // Toggle selection
-    setSelectedWallet(prev => (prev === walletAddress ? null : walletAddress));
+    setSelectedWallet((prev) => (prev === walletAddress ? null : walletAddress));
   };
-  
+
   const sendEth = useCallback(() => {
     const amount = parseFloat(ethToSend);
     if (!amount || !recipientAddress || !selectedWallet) return;
     setBusySendingEth(true);
-    sendTransaction({
-      to: recipientAddress as `0x${string}`,
-      value: BigInt(amount * 1e18),
-    }, {
-      onSettled: () => setBusySendingEth(false),
-    });
+    sendTransaction(
+      {
+        to: recipientAddress as `0x${string}`,
+        value: BigInt(amount * 1e18),
+      },
+      {
+        onSettled: () => setBusySendingEth(false),
+      }
+    );
   }, [recipientAddress, ethToSend, selectedWallet, sendTransaction]);
 
-  // Handle loading and connection states
   if (isLoading) {
     return (
       <div className="text-gray-900 dark:text-white">
         <div>Connecting wallet. Please wait...</div>
-        {walletCreationInProgress && <div className="text-sm text-gray-600 dark:text-gray-400 mt-2">Creating wallet...</div>}
+        {walletCreationInProgress && (
+          <div className="text-sm text-gray-600 dark:text-gray-400 mt-2">
+            Creating wallet...
+          </div>
+        )}
       </div>
     );
   }
 
-  // Handle not connected state
   if (!isConnected || !address) {
-     return (
-        <div className="bg-yellow-100 dark:bg-yellow-900 border border-yellow-400 text-yellow-700 dark:text-yellow-300 px-4 py-3 rounded mb-4">
-          Wallet not connected or address not available.
-        </div>
-      );
+    return (
+      <div className="bg-yellow-100 dark:bg-yellow-900 border border-yellow-400 text-yellow-700 dark:text-yellow-300 px-4 py-3 rounded mb-4">
+        Wallet not connected or address not available.
+      </div>
+    );
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      {/* The Radio Box component */}
+    <div className="flex flex-col gap-6">
+      <div>
+        <label className="text-sm text-gray-600 dark:text-gray-400 mb-1 block">
+          Select Network
+        </label>
+        <select
+          className="p-2 rounded border w-full bg-white dark:bg-gray-800 text-black dark:text-white"
+          value={currentChain?.id}
+          onChange={(e) => switchChain?.({ chainId: parseInt(e.target.value) })}
+        >
+          {chains.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
+          ))}
+        </select>
+      </div>
+
       <WalletOption
         address={address}
         balance={formatBalanceEth(ethBalance?.data?.value)}
-        chainName={effectiveChain?.name || `Chain ID ${effectiveChainId}` || "Unknown"}
+        chainName={currentChain?.name || `Chain ID ${effectiveChainId}`}
+        nativeCurrencySymbol={currentChain?.nativeCurrency?.symbol || 'ETH'} // <-- PASSING NATIVE CURRENCY SYMBOL
+
         isSelected={selectedWallet === address}
         onSelect={handleSelectWallet}
-        disabled={!effectiveChain && !effectiveChainId}
+        disabled={!currentChain}
       />
-      
-      </div>
-    
+
+      {/* Render TokenBalances for each chain configured in Wagmi, regardless of current connected chain */}
+      {chains.map((chain) => (
+        // Pass the connected address, but the chain object for this specific iteration
+        // This will attempt to fetch tokens for ALL configured chains for the connected address.
+        // The TokenBalances component will handle if there are no tokens defined for that chain.
+        <TokenBalances key={chain.id} address={address} chain={chain}  />
+      ))}
+
+      {/* The send ETH section was removed in previous analysis as it wasn't related to the token balance issue.
+          If you need it, re-add it here, but ensure selectedWallet is properly managed.
+          Given selectedWallet seems to just track the current connected wallet, you might not need a separate state for it
+          unless you're managing multiple wallets.
+      */}
+    </div>
   );
 }
 
-
-// ------------------------------------------
-// 3. The Top-Level Entry Point (Same as before, just renders the new component)
-// ------------------------------------------
 const Web3Zone = () => {
   const { user, isLoading, walletCreationInProgress } = useUser();
   useAutoConnect();
@@ -195,12 +290,11 @@ const Web3Zone = () => {
     );
   }
 
-  // Render the new selector component
   return (
     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
       <Web3Selector walletCreationInProgress={walletCreationInProgress} />
     </div>
   );
-}
+};
 
-export default Web3Zone
+export default Web3Zone;

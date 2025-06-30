@@ -2,10 +2,10 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useAccount, useBalance, useSendTransaction, useChainId } from "wagmi";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/src/components/ui/button";
 import { Menu, X } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { useWallet } from "@/hooks/useWallet";
+import { useToast } from "@/src/hooks/use-toast";
+import { useWallet } from "@/src/hooks/useWallet";
 import ConnectWalletButton from "./connectWalletbutton";
 import DashboardButton from "./dashboardbutton";
 import { UserButton, useUser } from "@civic/auth-web3/react";

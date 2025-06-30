@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { CopyIcon, Save, Send } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/src/hooks/use-toast";
 
 const mockErc20Code = `// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;

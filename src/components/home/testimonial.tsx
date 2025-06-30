@@ -2,9 +2,9 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-} from "@/components/ui/carousel";
+} from "@/src/components/ui/carousel";
 import { CheckCircle, Star } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/src/lib/utils";
 
 const testimonials = [
   {

@@ -1,5 +1,5 @@
 // import { useState } from "react";
-// import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+// import { supabase, isSupabaseConfigured } from "@/src/lib/supabase";
 // import { useDispatch } from "react-redux";
 
 // export const useSupabase = () => {

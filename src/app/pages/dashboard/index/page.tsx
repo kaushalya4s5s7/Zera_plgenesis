@@ -1,12 +1,12 @@
 'use client';
 import { ActivitySquare, BarChart3, ShieldCheck, Trophy } from "lucide-react";
-import DashboardLayout from "@/components/dashboard/dashlayout/dashlayout";
-import StatCard from "@/components/dashboard/dashui/StatCard";
-import LineChart from "@/components/dashboard/dashui/LineChart";
-import BarChart from "@/components/dashboard/dashui/BarChart";
-import CircularChart from "@/components/dashboard/dashui/CircularChart";
-import CalendarWidget from "@/components/dashboard/dashui/CalendaerWidget";
-import useAuditStore from "@/store/auditStore"; // Import the Zustand store
+import DashboardLayout from "@/src/components/dashboard/dashlayout/dashlayout";
+import StatCard from "@/src/components/dashboard/dashui/StatCard";
+import LineChart from "@/src/components/dashboard/dashui/LineChart";
+import BarChart from "@/src/components/dashboard/dashui/BarChart";
+import CircularChart from "@/src/components/dashboard/dashui/CircularChart";
+import CalendarWidget from "@/src/components/dashboard/dashui/CalendaerWidget";
+import useAuditStore from "@/src/store/auditStore"; // Import the Zustand store
 
 const Dashboard = () => {
   // Sample data for circular charts

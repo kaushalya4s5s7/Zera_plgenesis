@@ -1,12 +1,12 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { useWallet } from "@/hooks/useWallet";
+import { Button } from "@/src/components/ui/button";
+import { useWallet } from "@/src/hooks/useWallet";
 import { ArrowRight, Loader2 } from "lucide-react"; // Import a loader icon
 import { useRouter } from "next/navigation";
 import { useAccount } from "wagmi";
 import { useUser } from "@civic/auth-web3/react";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/src/hooks/use-toast";
 import { userHasWallet } from "@civic/auth-web3";
 import afterLogin from "./afterLogin";
 
