@@ -7,10 +7,10 @@ import {
   Loader2,
   Sparkles,
 } from "lucide-react";
-import { useToast } from "@/src/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { generateContractTests } from "../../../../utils/mistralAI";
 
-import { WobbleCard } from "@/src/components/ui/wobble-card";
+import { WobbleCard } from "@/components/ui/wobble-card";
 
 const testFrameworks = [
   {

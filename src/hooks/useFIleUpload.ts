@@ -1,4 +1,4 @@
-// src/hooks/useFileUpload.ts
+// @/hooks/useFileUpload.ts
 
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
@@ -7,9 +7,9 @@ import { useEthersSigner } from "./useEthers";
 import { useConfetti } from "./useConfetti";
 import { useAccount } from "wagmi";
 import { useNetwork } from "./useNetwork";
-import { preflightCheck } from "@/utils/preFlightCheck";
-import { getProofset } from "@/utils/getProofset";
-import { config } from "@/config";
+import { preflightCheck } from "utils/preFlightCheck";
+import { getProofset } from "utils/getProofset";
+import { config } from "config";
 
 export type UploadedInfo = {
   fileName?: string;
@@ -163,6 +163,8 @@ provider.name = provider.name ?? "UnknownProvider"; // fallback value
       setStatus("📁 Uploading file to storage provider...");
       setProgress(55);
 
+      let finalCommp: string = "";
+      
       try {
         const { commp } = await storageService.upload(uint8ArrayBytes, {
           onUploadComplete: (commp) => {
@@ -201,12 +203,17 @@ provider.name = provider.name ?? "UnknownProvider"; // fallback value
           await new Promise((res) => setTimeout(res, 50000));
         }
 
+        finalCommp = commp.toString();
         setProgress(95);
-        setUploadedInfo((prev) => ({
-          ...prev,
+        const finalUploadInfo = {
           fileName: file.name,
           fileSize: file.size,
-          commp: commp.toString(),
+          commp: finalCommp,
+        };
+        
+        setUploadedInfo((prev) => ({
+          ...prev,
+          ...finalUploadInfo,
         }));
       } catch (uploadError) {
         const error = uploadError as Error;
@@ -217,7 +224,7 @@ provider.name = provider.name ?? "UnknownProvider"; // fallback value
       console.log("🎉 UPLOAD SUCCESS:", {
         fileName: file.name,
         fileSize: file.size,
-        commp: uploadedInfo?.commp,
+        commp: finalCommp,
         txHash: uploadedInfo?.txHash,
       });
 

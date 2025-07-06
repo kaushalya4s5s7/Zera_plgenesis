@@ -12,10 +12,13 @@ export const config = {
   minDaysThreshold: 10,
   // Whether to use CDN for the storage for faster retrieval
   withCDN: true,
+  // Demo mode for downloads (set to false in production)
+  demoMode: false,
 } satisfies {
   storageCapacity: number;
   persistencePeriod: number;
   minDaysThreshold: number;
   withCDN: boolean;
+  demoMode: boolean;
 };
 

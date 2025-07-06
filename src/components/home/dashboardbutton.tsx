@@ -1,14 +1,15 @@
 "use client";
 
-import { Button } from "@/src/components/ui/button";
-import { useWallet } from "@/src/hooks/useWallet";
+import { Button } from "@/components/ui/button";
+import { useWallet } from "@/hooks/useWallet";
 import { ArrowRight, Loader2 } from "lucide-react"; // Import a loader icon
 import { useRouter } from "next/navigation";
 import { useAccount } from "wagmi";
 import { useUser } from "@civic/auth-web3/react";
-import { useToast } from "@/src/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { userHasWallet } from "@civic/auth-web3";
 import afterLogin from "./afterLogin";
+import BgAnimateButton from "../ui/bg-animate-button";
 
 const DashboardButton = () => {
   const router = useRouter();
@@ -50,13 +51,15 @@ const DashboardButton = () => {
   };
 
   return (
-    <Button
-      onClick={handleDashboardClick}
-      className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white flex items-center gap-2 transition-all"
+   <BgAnimateButton
+      onClick={handleDashboardClick} // Pass the onClick handler directly to BgAnimateButton
+      gradient="candy"
+      rounded="2xl"
+      animation="pulse"
+      size="lg"
     >
-      Wallet
-      <ArrowRight size={18} />
-    </Button>
+      wallet {/* Text content inside BgAnimateButton */}
+    </BgAnimateButton>
   );
 };
 

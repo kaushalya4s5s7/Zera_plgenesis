@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
-import DashboardLayout from "@/src/components/dashboard/dashlayout/dashlayout";
-import TestGenerator from "@/src/components/dashboard/testcase-generator/TestGenerator";
-import { useToast } from "@/src/hooks/use-toast";
+import DashboardLayout from "@/components/dashboard/dashlayout/dashlayout";
+import TestGenerator from "@/components/dashboard/testcase-generator/TestGenerator";
+import { useToast } from "@/hooks/use-toast";
 import {
   generateContractTests,
   simulateTestResults,

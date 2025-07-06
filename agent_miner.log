@@ -1,0 +1,26 @@
+2025-07-03 11:01:18.653 | DEBUG    | base.log:debug:50 - Log: =========================================
+2025-07-03 11:01:18.654 | DEBUG    | base.log:debug:50 - Log: _initialize()
+2025-07-03 11:01:18.654 | DEBUG    | base.log:debug:50 - Log: __init__ - END
+2025-07-03 11:01:18.654 | DEBUG    | base.log:debug:50 - ConfigManager._initialize()
+2025-07-03 11:01:18.654 | DEBUG    | base.log:debug:50 - ConfigManager: system info: uname_result(system='Darwin', node='kaushals-MacBook-Air.local', release='24.3.0', version='Darwin Kernel Version 24.3.0: Thu Jan  2 20:31:46 PST 2025; root:xnu-11215.81.4~4/RELEASE_ARM64_T8132', machine='x86_64')
+2025-07-03 11:01:18.654 | DEBUG    | base.log:debug:50 - ConfigManager: entry point path: /Users/kaushalchaudhari/Desktop/web3/projects/Zera_plgenesis/Zera_civicAuth/cortensord
+2025-07-03 11:01:18.654 | DEBUG    | base.log:debug:50 - ConfigManager: entry point dir: /Users/kaushalchaudhari/Desktop/web3/projects/Zera_plgenesis/Zera_civicAuth
+2025-07-03 11:01:18.655 | DEBUG    | base.log:debug:50 - W3ClientSDK: get_instance
+2025-07-03 11:01:18.655 | DEBUG    | base.log:debug:50 - W3ClientSDK._initialize()
+2025-07-03 11:01:18.655 | DEBUG    | base.log:debug:50 - W3Client init
+2025-07-03 11:01:18.655 | DEBUG    | base.log:debug:50 - W3Client init_config
+2025-07-03 11:01:25.151 | DEBUG    | base.log:debug:50 - W3ClientSDK: _initialize - from_address: 0x37DA893eD0DFFF6B5C2d386A28c846e8b730cC7d
+2025-07-03 11:01:25.152 | DEBUG    | base.log:debug:50 - W3ClientSDK: get_instance
+2025-07-03 11:03:08.216 | DEBUG    | base.log:debug:50 - Log: =========================================
+2025-07-03 11:03:08.217 | DEBUG    | base.log:debug:50 - Log: _initialize()
+2025-07-03 11:03:08.217 | DEBUG    | base.log:debug:50 - Log: __init__ - END
+2025-07-03 11:03:08.217 | DEBUG    | base.log:debug:50 - ConfigManager._initialize()
+2025-07-03 11:03:08.217 | DEBUG    | base.log:debug:50 - ConfigManager: system info: uname_result(system='Darwin', node='kaushals-MacBook-Air.local', release='24.3.0', version='Darwin Kernel Version 24.3.0: Thu Jan  2 20:31:46 PST 2025; root:xnu-11215.81.4~4/RELEASE_ARM64_T8132', machine='x86_64')
+2025-07-03 11:03:08.217 | DEBUG    | base.log:debug:50 - ConfigManager: entry point path: /Users/kaushalchaudhari/Desktop/web3/projects/Zera_plgenesis/Zera_civicAuth/cortensord
+2025-07-03 11:03:08.217 | DEBUG    | base.log:debug:50 - ConfigManager: entry point dir: /Users/kaushalchaudhari/Desktop/web3/projects/Zera_plgenesis/Zera_civicAuth
+2025-07-03 11:03:08.217 | DEBUG    | base.log:debug:50 - W3ClientSDK: get_instance
+2025-07-03 11:03:08.217 | DEBUG    | base.log:debug:50 - W3ClientSDK._initialize()
+2025-07-03 11:03:08.217 | DEBUG    | base.log:debug:50 - W3Client init
+2025-07-03 11:03:08.218 | DEBUG    | base.log:debug:50 - W3Client init_config
+2025-07-03 11:03:14.621 | DEBUG    | base.log:debug:50 - W3ClientSDK: _initialize - from_address: 0x37DA893eD0DFFF6B5C2d386A28c846e8b730cC7d
+2025-07-03 11:03:14.622 | DEBUG    | base.log:debug:50 - W3ClientSDK: get_instance

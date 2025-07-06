@@ -2,13 +2,13 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { Synapse, TOKENS } from "@filoz/synapse-sdk";
-import { useEthersProvider } from "@/src/hooks/useEthers";
-import { useEthersSigner } from "@/src/hooks/useEthers";
+import { useEthersProvider } from "@/hooks/useEthers";
+import { useEthersSigner } from "@/hooks/useEthers";
 import { useAccount } from "wagmi"; // Wagmi's useAccount
-// import { useNetwork } from "@/src/hooks/useNetwork"; // Removed: No longer needed
+// import { useNetwork } from "@/hooks/useNetwork"; // Removed: No longer needed
 import { formatUnits } from "viem";
-import { defaultBalances, UseBalancesResponse } from "@/src/types";
-import { calculateStorageMetrics } from "@/utils/calculateStorageMetrics";
+import { defaultBalances, UseBalancesResponse } from "@/types";
+import { calculateStorageMetrics } from "utils/calculateStorageMetrics";
 
 /**
  * Hook to fetch and format wallet balances and storage metrics

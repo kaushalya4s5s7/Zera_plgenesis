@@ -17,7 +17,7 @@ import { erc20Abi, formatEther } from "viem";
 import { useCallback, useState, FC } from "react";
 // import { userHasWallet } from "@civic/auth-web3"; // Not used in the provided code, can be removed if not needed elsewhere
 import QRCode from "react-qr-code";
-import { SupportedChainId, tokensByChain } from "@/utils/tokes"; // Ensure this path is correct
+import { SupportedChainId, tokensByChain } from "utils/tokes"; // Ensure this path is correct
 
 const truncateAddress = (address: string, chars = 4): string => {
   return `${address.slice(0, chars + 2)}...${address.slice(-chars)}`;

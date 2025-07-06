@@ -11,13 +11,17 @@ interface AuditIssue {
   line?: number | null;
   recommendation?: string;
 }
-interface Contract {
+export interface Contract {
   id: number;
   name: string;
   chain: string;
   rating: number;
   auditor: string;
+  auditorFull: string;
   date: string;
+  contractHash: string;
+  reportCID?: string;
+  isUploaded: boolean;
 }
 // Define issue count interface
 interface IssueCount {
@@ -34,19 +38,25 @@ interface AuditStore {
   auditScore: number;
   auditReport: string;
   contractHash: string;
-  contracts: Contract[]; // Assuming contracts is an array of strings
+  contracts: Contract[];
   issues: AuditIssue[];
   issueCount: IssueCount;
   isLocked: boolean;
+  uploadedReportCID: string | null; // Store the uploaded report CID
+  currentAuditHasUpload: boolean; // Track if current audit has an upload
+  auditTxHash: string | null; // Store the transaction hash from audit registration
 
   // Actions
-  setContracts: (contracts: Contract[]) => void; // Assuming contracts is an array of strings
+  setContracts: (contracts: Contract[]) => void;
   setAuditScore: (score: number) => void;
   setAuditReport: (report: string) => void;
   setContractHash: (hash: string) => void;
   setIssues: (issues: AuditIssue[]) => void;
   setIssueCount: (count: IssueCount) => void;
   setIsLocked: (locked: boolean) => void;
+  setUploadedReportCID: (cid: string | null) => void; // New action to store CID
+  setCurrentAuditHasUpload: (hasUpload: boolean) => void; // New action to track upload status
+  setAuditTxHash: (txHash: string | null) => void; // New action to store audit tx hash
 
   // Reset state
   resetAuditState: () => void;
@@ -57,7 +67,7 @@ const useAuditStore = create<AuditStore>()((set) => ({
   // Initial state
   auditScore: 0,
   auditReport: "",
-  contracts: [], // Assuming contracts is an array of strings
+  contracts: [],
   contractHash: "",
   issues: [],
   issueCount: {
@@ -68,6 +78,9 @@ const useAuditStore = create<AuditStore>()((set) => ({
     info: 0,
   },
   isLocked: true,
+  uploadedReportCID: null, // Initialize as null
+  currentAuditHasUpload: false, // Initialize as false
+  auditTxHash: null, // Initialize as null
 
   // Actions
   setContracts: (contracts) => set({ contracts }),
@@ -77,6 +90,15 @@ const useAuditStore = create<AuditStore>()((set) => ({
   setIssues: (issues) => set({ issues }),
   setIssueCount: (count) => set({ issueCount: count }),
   setIsLocked: (locked) => set({ isLocked: locked }),
+  setUploadedReportCID: (cid) => set({ uploadedReportCID: cid }), // New action implementation
+  setCurrentAuditHasUpload: (hasUpload) => set({ currentAuditHasUpload: hasUpload }), // New action implementation
+  setAuditTxHash: (txHash) => {
+    console.log("=== AUDIT STORE: setAuditTxHash called ===");
+    console.log("Previous auditTxHash:", useAuditStore.getState().auditTxHash);
+    console.log("New auditTxHash:", txHash);
+    console.log("========================================");
+    set({ auditTxHash: txHash });
+  }, // New action implementation with debug logging
 
   // Reset state function
   resetAuditState: () =>
@@ -94,6 +116,9 @@ const useAuditStore = create<AuditStore>()((set) => ({
         info: 0,
       },
       isLocked: true,
+      uploadedReportCID: null, // Reset CID as well
+      currentAuditHasUpload: false, // Reset upload status as well
+      auditTxHash: null, // Reset audit tx hash as well
     }),
 }));
 

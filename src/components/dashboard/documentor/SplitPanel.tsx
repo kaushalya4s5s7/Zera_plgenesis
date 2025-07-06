@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Download, Check, Sparkles, Loader2 } from "lucide-react";
-import { useToast } from "@/src/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 // Mock code for initial display
 const mockCode = `// SPDX-License-Identifier: MIT

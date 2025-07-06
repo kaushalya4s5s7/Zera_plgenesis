@@ -1,8 +1,8 @@
 "use client";
 import { useState } from "react";
 import { Code, FileJson } from "lucide-react";
-import { useToast } from "@/src/hooks/use-toast";
-import { WobbleCard } from "@/src/components/ui/wobble-card";
+import { useToast } from "@/hooks/use-toast";
+import { WobbleCard } from "@/components/ui/wobble-card";
 
 type ContractTemplateProps = {
   onSelect: (template: string) => void;

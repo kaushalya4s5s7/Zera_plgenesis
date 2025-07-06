@@ -7,10 +7,28 @@ import { SparklesCore } from "../ui/sparkles";
 import { RetroGrid } from "../magicui/retro-grid";
 import BackgroundPath from "../ui/BackgroundPath";
 import Counter from "../ui/counter";
+import { useState } from "react";
+import { ContainerScroll } from "../ui/container-scroll-animation";
+
+ 
+import { TextGif } from "../ui/text-gif"; 
 
 const Hero = () => {
+  const [text, setText] = useState("TextGif")
+  const [size, setSize] = useState("xl")
+  const [weight, setWeight] = useState("bold")
+ 
+  const gifUrls = [
+    "https://media.giphy.com/media/3zvbrvbRe7wxBofOBI/giphy.gif",
+    "https://media.giphy.com/media/fnglNFjBGiyAFtm6ke/giphy.gif",
+    "https://media.giphy.com/media/9Pmfazv34l7aNIKK05/giphy.gif",
+    "https://media.giphy.com/media/4bhs1boql4XVJgmm4H/giphy.gif",
+  ]
+ 
+  const [selectedGif, setSelectedGif] = useState(gifUrls[0]);
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden bg-black">
+      <BackgroundPath/>
       {/* RetroGrid Background - Full Screen */}
       {/* <RetroGrid 
         className="absolute inset-0 z-0"
@@ -20,7 +38,44 @@ const Hero = () => {
         angle={45}
         opacity={0.6}
       /> */}
-      <BackgroundPath/>
+
+      {/* Neon Gas Effects */}
+      <div className="absolute inset-0 z-5">
+                  <BackgroundPath/>
+
+        {/* Main neon gas clouds with wave animations */}
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-blue-500 blur-3xl animate-float opacity-60" style={{ animationDelay: '0s' }}></div>
+        <div className="absolute bottom-1/3 right-1/4 w-80 h-80 rounded-full bg-purple-500 blur-3xl animate-float-slow opacity-50" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-cyan-400/5 blur-3xl animate-float opacity-40" style={{ animationDelay: '1s' }}></div>
+        
+        {/* Neon gas trails with flowing wave animations */}
+        <div className="absolute top-20 left-10 w-32 h-4 bg-blue-400/20 rounded-full blur-xl animate-float opacity-30" style={{ transform: 'rotate(-15deg)', animationDelay: '0.5s' }}></div>
+        <div className="absolute top-40 right-20 w-24 h-3 bg-purple-400/15 rounded-full blur-lg animate-float-slow opacity-25" style={{ transform: 'rotate(25deg)', animationDelay: '1.5s' }}></div>
+        <div className="absolute bottom-32 left-20 w-20 h-2 bg-cyan-300/20 rounded-full blur-md animate-float opacity-20" style={{ animationDelay: '0.8s' }}></div>
+        <div className="absolute bottom-20 right-10 w-28 h-3 bg-blue-300/18 rounded-full blur-lg animate-float-slow opacity-35" style={{ transform: 'rotate(-30deg)', animationDelay: '2.2s' }}></div>
+        
+        {/* Floating neon particles with wave effects */}
+        <div className="absolute top-16 left-1/3 w-3 h-3 bg-blue-400 rounded-full blur-sm animate-float opacity-70" style={{ boxShadow: '0 0 10px rgba(59, 130, 246, 0.8), 0 0 20px rgba(59, 130, 246, 0.4)', animationDelay: '0.3s' }}></div>
+        <div className="absolute top-32 right-1/3 w-2 h-2 bg-purple-400 rounded-full blur-sm animate-float-slow opacity-60" style={{ boxShadow: '0 0 8px rgba(147, 51, 234, 0.6), 0 0 16px rgba(147, 51, 234, 0.3)', animationDelay: '1.8s' }}></div>
+        <div className="absolute bottom-24 left-1/5 w-4 h-4 bg-cyan-300 rounded-full blur-sm animate-float opacity-65" style={{ boxShadow: '0 0 12px rgba(34, 211, 238, 0.7), 0 0 24px rgba(34, 211, 238, 0.4)', animationDelay: '1.2s' }}></div>
+        <div className="absolute bottom-40 right-1/5 w-2 h-2 bg-blue-300 rounded-full blur-sm animate-float-slow opacity-50" style={{ boxShadow: '0 0 6px rgba(59, 130, 246, 0.5), 0 0 12px rgba(59, 130, 246, 0.3)', animationDelay: '2.5s' }}></div>
+        
+        {/* Neon gas streams */}
+        <div className="absolute top-0 left-1/4 w-1 h-32 bg-gradient-to-b from-blue-400/30 to-transparent blur-sm opacity-40"></div>
+        <div className="absolute top-0 right-1/3 w-1 h-24 bg-gradient-to-b from-purple-400/25 to-transparent blur-sm opacity-35"></div>
+        <div className="absolute bottom-0 left-1/3 w-1 h-28 bg-gradient-to-t from-cyan-400/20 to-transparent blur-sm opacity-30"></div>
+        
+        {/* Large atmospheric neon glow with wave effect */}
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-radial from-blue-500/5 via-purple-500/3 to-transparent blur-3xl animate-float opacity-60" style={{ animationDelay: '1.5s' }}></div>
+        
+        {/* Additional floating neon wisps with wave movements */}
+        <div className="absolute top-1/3 left-2/3 w-6 h-6 bg-blue-300 rounded-full blur-md animate-float-slow opacity-40" style={{ boxShadow: '0 0 15px rgba(59, 130, 246, 0.6)', animationDelay: '0.7s' }}></div>
+        <div className="absolute bottom-1/3 right-2/3 w-5 h-5 bg-purple-300 rounded-full blur-md animate-float opacity-35" style={{ boxShadow: '0 0 12px rgba(147, 51, 234, 0.5)', animationDelay: '2.8s' }}></div>
+        
+        {/* Extra wave elements for more fluid motion */}
+        <div className="absolute top-3/4 left-1/5 w-16 h-3 bg-blue-200 rounded-full blur-lg animate-float-slow opacity-25" style={{ transform: 'rotate(20deg)', animationDelay: '1.7s' }}></div>
+        <div className="absolute top-1/5 right-1/5 w-12 h-2 bg-purple-200 rounded-full blur-md animate-float opacity-20" style={{ transform: 'rotate(-35deg)', animationDelay: '3.1s' }}></div>
+      </div>
 
       {/* Blue Light Border Effect */}
       {/* <div className="absolute inset-0 z-10"> */}
@@ -66,17 +121,19 @@ const Hero = () => {
           </div>
 
           {/* Main Heading */}
-          <div className="space-y-2 mb-12 relative">
-            <h1 className="text-6xl md:text-8xl lg:text-9xl font-black leading-[0.9] tracking-tight font-['Space_Grotesk'] drop-shadow-2xl relative z-40" style={{ textShadow: '0 0 20px rgba(59, 130, 246, 0.3)' }}>
-              <span className="block text-white animate-fade-in">
+          <div className="font-ibm secure space-y-2 mb-12 relative">
+             
+            <h1 className="text-6xl  md:text-8xl lg:text-9xl font-black leading-[0.9] tracking-tight  drop-shadow-2xl relative z-40" style={{ textShadow: '0 0 20px rgba(59, 130, 246, 0.3)' }}>
+              <span className="block text-shadow-lg/30 font-ibm text-white animate-fade-in">
                 SECURE
               </span>
               
               <div className="block animate-fade-in mt-8 delay-200">
-                <div className="text-6xl md:text-8xl lg:text-9xl font-black">
-                  <span className="text-gray-100">WEB</span>
-                  <span className="text-blue-400">3</span>
+                <div className="text-6xl md:text-8xl lg:text-9xl font-white">
+                  <span className="font-bold text-gray-100">WEB</span>
+            <TextGif gifUrl={gifUrls[2]} text="3" size="xxxl" weight="bold" />
                 </div>
+                 
                 
                 {/* SparklesCore positioned directly under WEB3 */}
                 <div className="w-full h-16 relative mt-1 flex justify-center">
@@ -108,10 +165,21 @@ const Hero = () => {
                   WITH
                 </span>
                 <PointerHighlight
-                  rectangleClassName="bg-gradient-to-r from-green-500/20 to-green-500/20 border-2 border-blue-400/40"
-                  pointerClassName="text-blue-300"
+                  rectangleClassName="bg-gradient-to-r from-white-500/30 to-emerald-500/30 border-2 border-green-400/40"
+                  pointerClassName="text-green-300"
                 >
-                  <span className="relative z-50 font-black text-6xl md:text-8xl lg:text-9xl text-white animate-fade-in delay-600" style={{ textShadow: '0 0 30px rgba(59, 130, 246, 0.5)' }}>
+                  <span className="relative z-50 font-black text-6xl md:text-8xl lg:text-9xl animate-fade-in delay-600" 
+                    style={{ 
+                      background: 'linear-gradient(135deg, #10b981, #34d399, #6ee7b7, #10b981)',
+                      WebkitBackgroundClip: 'text',
+                      WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
+                      textShadow: '0 0 30px rgba(16, 185, 129, 0.6), 0 0 60px rgba(52, 211, 153, 0.4), 0 0 90px rgba(16, 185, 129, 0.3)',
+                      filter: 'drop-shadow(0 0 20px rgba(16, 185, 129, 0.5))',
+                      backgroundSize: '300% 100%',
+                      animation: 'gradient-shift 4s ease-in-out infinite'
+                    }}
+                  >
                     ZERA
                   </span>
                 </PointerHighlight>
@@ -144,6 +212,28 @@ const Hero = () => {
             </Button>
             
           </div>
+          <div> <ContainerScroll
+        titleComponent={
+          <>
+            <h1 className="text-4xl font-semibold text-black dark:text-white">
+              Unleash the power of <br />
+              <span className="text-4xl md:text-[6rem] font-bold mt-1 leading-none">
+                Scroll Animations
+              </span>
+            </h1>
+          </>
+        }
+      >
+        <img
+          src={`/linear.webp`}
+          alt="hero"
+          height={720}
+          width={1400}
+          className="mx-auto rounded-2xl object-cover h-full object-left-top"
+          draggable={false}
+        />
+      </ContainerScroll></div>
+         
 
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto animate-fade-in delay-1200">

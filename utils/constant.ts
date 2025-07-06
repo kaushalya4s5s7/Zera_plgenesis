@@ -1,4 +1,4 @@
-// src/utils/constant.ts
+// @/utils/constant.ts
 
 import { CONTRACT_ADDRESSES } from "@filoz/synapse-sdk";
 

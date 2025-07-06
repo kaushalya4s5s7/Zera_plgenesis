@@ -14,7 +14,7 @@ export const CHAIN_CONFIG = {
   Sepolia: {
     chainId: 11155111,
     name: "Ethereum Sepolia",
-    contractAddress: "0x49466ba632569a2d9f1919941468F17e287f26dA", // replace with actual contract address
+    contractAddress: "0xE3873898A217d64B08dB9aE587AfbdDc24b84409", // replace with actual contract address
     explorer: "https://sepolia.etherscan.io/",
   },
 } as const;
@@ -62,8 +62,45 @@ export const AUDIT_REGISTRY_ABI = [
         name: "timestamp",
         type: "uint256",
       },
+      {
+        indexed: true,
+        internalType: "bytes32",
+        name: "txHash",
+        type: "bytes32",
+      },
     ],
     name: "AuditRegistered",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "bytes32",
+        name: "txHash",
+        type: "bytes32",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "cid",
+        type: "string",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "auditor",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "timestamp",
+        type: "uint256",
+      },
+    ],
+    name: "CIDMapped",
     type: "event",
   },
   {
@@ -85,7 +122,13 @@ export const AUDIT_REGISTRY_ABI = [
       },
     ],
     name: "registerAudit",
-    outputs: [],
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -261,6 +304,62 @@ export const AUDIT_REGISTRY_ABI = [
         internalType: "uint256",
         name: "",
         type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "txHash",
+        type: "bytes32",
+      },
+      {
+        internalType: "string",
+        name: "cid",
+        type: "string",
+      },
+    ],
+    name: "mapCIDToAudit",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "txHash",
+        type: "bytes32",
+      },
+    ],
+    name: "getAuditCID",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "txHash",
+        type: "bytes32",
+      },
+    ],
+    name: "isCIDMapped",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
       },
     ],
     stateMutability: "view",

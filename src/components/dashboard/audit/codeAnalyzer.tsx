@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Play, AlertTriangle, Loader2 } from "lucide-react";
-import { useToast } from "@/src/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 // Sample smart contract code
 const sampleCode = `// SPDX-License-Identifier: MIT

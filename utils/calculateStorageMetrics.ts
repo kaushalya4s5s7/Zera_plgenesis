@@ -4,8 +4,8 @@ import {
   TIME_CONSTANTS,
   SIZE_CONSTANTS,
 } from "@filoz/synapse-sdk";
-import { config } from "@/config";
-import { PandoraBalanceData, StorageCalculationResult } from "@/src/types";
+import { config } from "../config";
+import { PandoraBalanceData, StorageCalculationResult } from "@/types";
 
 /**
  * Constants for storage pricing and calculations

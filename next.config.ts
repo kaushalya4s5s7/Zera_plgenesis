@@ -3,7 +3,11 @@ import { createCivicAuthPlugin } from "@civic/auth/nextjs";
 
 
 const nextConfig: NextConfig = {
- 
+  
+ transpilePackages: ['motion','@splinetool/react-spline'],
+  experimental: {
+    esmExternals: 'loose'
+  } ,
   images: {
     unoptimized: true,
     domains: ["images.unsplash.com", "assets.aceternity.com","img.freepik.com"],

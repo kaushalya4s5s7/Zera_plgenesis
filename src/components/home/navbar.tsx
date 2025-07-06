@@ -2,10 +2,10 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useAccount, useBalance, useSendTransaction, useChainId } from "wagmi";
-import { Button } from "@/src/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
-import { useToast } from "@/src/hooks/use-toast";
-import { useWallet } from "@/src/hooks/useWallet";
+import { useToast } from "@/hooks/use-toast";
+import { useWallet } from "@/hooks/useWallet";
 import ConnectWalletButton from "./connectWalletbutton";
 import DashboardButton from "./dashboardbutton";
 import { UserButton, useUser } from "@civic/auth-web3/react";
@@ -113,7 +113,7 @@ const handleSignIn = async () => {
           </a>
         </div>
 
-        {/* Desktop Navigation */}
+        {/* Desktop Navigation
         <nav className="hidden md:flex items-center space-x-8">
           <a
             href="#features"
@@ -128,7 +128,7 @@ const handleSignIn = async () => {
           >
             How It Works
           </a>
-        </nav>
+        </nav> */}
 
         <div className="hidden md:flex items-center space-x-4">
           <div className="flex items-center gap-4">

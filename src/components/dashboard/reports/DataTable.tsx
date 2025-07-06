@@ -1,5 +1,6 @@
+"use client";
 import { useState, useEffect } from "react";
-import { useAccount, useChainId, usePublicClient } from "wagmi";
+import { useAccount, useChainId, usePublicClient, useReadContract } from "wagmi";
 import { formatEther } from "viem";
 import {
   ChevronLeft,
@@ -10,16 +11,21 @@ import {
   Check,
   Wallet,
   AlertCircle,
+  RefreshCw,
+
 } from "lucide-react";
-import { useToast } from "@/src/hooks/use-toast";
+import { useFileUpload } from "@/hooks/useFIleUpload";
+import { useToast } from "@/hooks/use-toast";
+import { DownloadButton } from "./DownloadButton";
 import {
   CONTRACT_ADDRESSES,
   AUDIT_REGISTRY_ABI,
   CHAIN_CONFIG,
   type ChainKey,
 } from "../../../../utils/Contract";
+import { config } from "../../../../config";
 
-import useAuditStore from "@/src/store/auditStore";
+import useAuditStore, { type Contract } from "@/store/auditStore";
 
 type DataTableProps = {
   className?: string;
@@ -31,6 +37,64 @@ const truncateAddress = (address: string, chars = 4): string => {
   return `${address.substring(0, chars + 2)}...${address.substring(address.length - chars)}`;
 };
 
+// Helper function to get CID for an audit from the contract
+const getAuditCIDFromContract = async (
+  publicClient: any, 
+  contractAddress: string, 
+  contractHash: string, 
+  auditor: string, 
+  timestamp: number
+): Promise<string | null> => {
+  try {
+    // Get AuditRegistered events for this contract hash and auditor
+    const logs = await publicClient.getLogs({
+      address: contractAddress as `0x${string}`,
+      event: {
+        type: 'event',
+        name: 'AuditRegistered',
+        inputs: [
+          { name: 'contractHash', type: 'bytes32', indexed: true },
+          { name: 'stars', type: 'uint8', indexed: false },
+          { name: 'summary', type: 'string', indexed: false },
+          { name: 'auditor', type: 'address', indexed: true },
+          { name: 'timestamp', type: 'uint256', indexed: false },
+          { name: 'txHash', type: 'bytes32', indexed: true },
+        ],
+      },
+      args: {
+        contractHash: contractHash as `0x${string}`,
+        auditor: auditor as `0x${string}`,
+      },
+      fromBlock: 'earliest',
+      toBlock: 'latest',
+    });
+
+    // Find the event that matches the timestamp
+    for (const log of logs) {
+      const eventTimestamp = Number(log.args?.timestamp || 0);
+      if (eventTimestamp === timestamp && log.args?.txHash) {
+        // Get the CID using the transaction hash
+        const cid = await publicClient.readContract({
+          address: contractAddress as `0x${string}`,
+          abi: AUDIT_REGISTRY_ABI,
+          functionName: 'getAuditCID',
+          args: [log.args.txHash],
+        });
+
+        if (cid && cid.length > 0) {
+          console.log("✅ Retrieved CID from contract:", cid);
+          return cid as string;
+        }
+      }
+    }
+
+    return null;
+  } catch (error) {
+    console.error("Error getting CID from contract:", error);
+    return null;
+  }
+};
+
 const DataTable = ({ className }: DataTableProps) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -39,6 +103,7 @@ const DataTable = ({ className }: DataTableProps) => {
   const [auditorFilter, setAuditorFilter] = useState<string | null>(null);
   const [ratingRange, setRatingRange] = useState({ min: 0, max: 100 });
   const [isLoading, setIsLoading] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0); // Add refresh trigger
   const itemsPerPage = 5;
   const { toast } = useToast();
 
@@ -47,8 +112,8 @@ const DataTable = ({ className }: DataTableProps) => {
   const chainId = useChainId();
   const publicClient = usePublicClient();
   
-  const { contracts, setContracts } = useAuditStore();
-
+  const { contracts, setContracts, contractHash: currentContractHash, uploadedReportCID, currentAuditHasUpload } = useAuditStore();
+  const uploadedInfo = useFileUpload();
   // Get effective chain info (matching Web3Zone pattern)
   const effectiveChain = chain;
   const effectiveChainId = chain?.id || chainId;
@@ -65,6 +130,25 @@ const DataTable = ({ className }: DataTableProps) => {
     });
   }, [isConnected, address, chain, chainId, effectiveChainId, publicClient]);
 
+  // Manual refresh function
+  const handleRefresh = () => {
+    console.log("Manual refresh triggered");
+    setRefreshKey(prev => prev + 1);
+  };
+
+  // Listen for audit registration events
+  useEffect(() => {
+    const handleAuditRegistered = () => {
+      console.log("Audit registered event received, refreshing data...");
+      handleRefresh();
+    };
+
+    window.addEventListener('auditRegistered', handleAuditRegistered);
+    return () => {
+      window.removeEventListener('auditRegistered', handleAuditRegistered);
+    };
+  }, []);
+
   // Fetch contract data using wagmi
   useEffect(() => {
     const fetchData = async () => {
@@ -79,7 +163,7 @@ const DataTable = ({ className }: DataTableProps) => {
         if (effectiveChainId !== CHAIN_CONFIG.Sepolia.chainId) {
           toast({
             title: "Wrong Network",
-            description: "Please switch to Pharos Test Network",
+            description: "Please click on download button for download  ",
             variant: "destructive",
           });
           return;
@@ -131,6 +215,76 @@ const DataTable = ({ className }: DataTableProps) => {
               args: [hash],
             });
 
+            // Extract report CID from contract first, fallback to summary parsing
+            let reportCID: string | undefined;
+            let isUploaded = false;
+
+            // Check if this is the current audit being worked on and has an upload
+            const isCurrentAudit = hash === currentContractHash;
+            
+            if (!config.demoMode) {
+              // Production mode: Try to get CID from contract first
+              console.log("=== DATATABLE CID EXTRACTION ===");
+              console.log("Checking audit for CID:", { hash, auditor: audit.auditor, timestamp: audit.timestamp });
+              
+              try {
+                // First, try to get CID from the contract
+                const contractCID = await getAuditCIDFromContract(
+                  publicClient,
+                  contractAddress,
+                  hash,
+                  audit.auditor,
+                  Number(audit.timestamp)
+                );
+                
+                if (contractCID) {
+                  reportCID = contractCID;
+                  isUploaded = true;
+                  console.log("✅ Retrieved CID from contract:", reportCID);
+                } else {
+                  // Fallback: Extract CID from summary for backwards compatibility
+                  console.log("No CID found in contract, checking summary for CID:", audit.summary);
+                  const cidMatch = audit.summary.match(/Report CID:\s*([a-zA-Z2-7]{40,})/);
+                  if (cidMatch) {
+                    reportCID = cidMatch[1];
+                    isUploaded = true;
+                    console.log("✅ Extracted CID from summary (fallback):", reportCID);
+                  } else {
+                    console.log("❌ No CID found in summary either. Summary was:", audit.summary);
+                  }
+                }
+              } catch (error) {
+                console.error("Error getting CID:", error);
+                // Fallback to summary parsing on error
+                const cidMatch = audit.summary.match(/Report CID:\s*([a-zA-Z2-7]{40,})/);
+                if (cidMatch) {
+                  reportCID = cidMatch[1];
+                  isUploaded = true;
+                  console.log("✅ Extracted CID from summary (error fallback):", reportCID);
+                }
+              }
+              
+              // If this is the current audit and we have an upload in progress, use that data
+              if (isCurrentAudit && currentAuditHasUpload && uploadedReportCID) {
+                reportCID = uploadedReportCID;
+                isUploaded = true;
+                console.log("✅ Using current audit upload CID:", reportCID);
+              }
+              
+              console.log("Final report status - CID:", reportCID, "isUploaded:", isUploaded);
+              console.log("==================================");
+            } else {
+              // Demo mode: Use test CIDs for simulation
+              const hasReport = i % 3 === 0;
+              const testCIDs = [
+                "QmNRCQWfgze6AbBCaT1rkrkV5tJ2aP2MNKQX1QakrCrf6Y", // Example valid CID
+                "QmYwAPJzv5CZsnA625s3Xf2nemtYgPpHdWEz79ojWnPbdG", // Example valid CID
+                "QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco", // Example valid CID
+              ];
+              reportCID = hasReport ? testCIDs[i % testCIDs.length] : undefined;
+              isUploaded = !!reportCID;
+            }
+
             allAudits.unshift({
               id: i + 1,
               name: `Contract ${i}`,
@@ -140,6 +294,17 @@ const DataTable = ({ className }: DataTableProps) => {
               auditorFull: audit.auditor,
               date: new Date(Number(audit.timestamp) * 1000).toLocaleDateString(),
               contractHash: hash,
+              reportCID,
+              isUploaded,
+            });
+            
+            console.log(`Audit ${i} processed:`, {
+              contractHash: hash,
+              summary: audit.summary,
+              reportCID,
+              isUploaded,
+              stars: audit.stars,
+              auditor: audit.auditor
             });
           } catch (error) {
             console.error(`Error fetching audit ${i}:`, error);
@@ -167,8 +332,7 @@ const DataTable = ({ className }: DataTableProps) => {
     };
 
     fetchData();
-  }, [isConnected, publicClient, effectiveChain, effectiveChainId, toast, setContracts]);
-
+  }, [isConnected, publicClient, effectiveChain, effectiveChainId, toast, setContracts, refreshKey, currentContractHash, uploadedReportCID, currentAuditHasUpload]); // Ensure all dependencies are correct
   // Helper function to determine the color based on rating
   const getRatingColor = (rating: number) => {
     if (rating >= 90) return "bg-gradient-to-r from-secondary to-primary";
@@ -281,6 +445,18 @@ const DataTable = ({ className }: DataTableProps) => {
           <h3 className="text-lg font-semibold text-white">Contract Reports</h3>
           <p className="text-sm text-gray-400">
             Connected: {truncateAddress(address)} on {effectiveChain?.name || 'Unknown Chain'}
+            {config.demoMode ? (
+              <span className="ml-2 px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-xs">DEMO MODE</span>
+            ) : (
+              <span className="ml-2 px-2 py-1 bg-green-500/20 text-green-400 rounded text-xs">PRODUCTION</span>
+            )}
+            {/* Debug info for current audit */}
+            {currentContractHash && (
+              <span className="ml-2 px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-xs">
+                Current: {currentContractHash.slice(0, 8)}... 
+                {currentAuditHasUpload ? ' (Has Upload)' : ' (No Upload)'}
+              </span>
+            )}
           </p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
@@ -294,6 +470,15 @@ const DataTable = ({ className }: DataTableProps) => {
               className="pl-10 pr-4 py-2 rounded-lg bg-white/5 border border-white/20 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary w-full sm:w-64"
             />
           </div>
+          <button
+            onClick={handleRefresh}
+            disabled={isLoading}
+            className="px-4 py-2 rounded-lg bg-white/5 border border-white/20 text-white hover:bg-white/10 transition-colors flex items-center gap-2 disabled:opacity-50"
+            title="Refresh data"
+          >
+            <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+            <span>Refresh</span>
+          </button>
           <div className="relative">
             <button
               onClick={() => setShowFilterMenu(!showFilterMenu)}
@@ -403,8 +588,8 @@ const DataTable = ({ className }: DataTableProps) => {
         <div className="mb-4 p-3 bg-orange-500/10 border border-orange-500/20 rounded-lg flex items-center gap-2">
           <AlertCircle className="w-4 h-4 text-orange-400" />
           <span className="text-orange-400 text-sm">
-            Please switch to Sepolia network to view contract reports
-          </span>
+           Please click on download button for download
+           </span>
         </div>
       )}
 
@@ -418,6 +603,7 @@ const DataTable = ({ className }: DataTableProps) => {
               <th className="px-6 py-3">Rating</th>
               <th className="px-6 py-3">Auditor</th>
               <th className="px-6 py-3">Date</th>
+              <th className="px-6 py-3">Report</th>
               <th className="px-6 py-3 rounded-tr-lg">Actions</th>
             </tr>
           </thead>
@@ -463,6 +649,9 @@ const DataTable = ({ className }: DataTableProps) => {
                   </td>
                   <td className="px-6 py-4">{contract.date}</td>
                   <td className="px-6 py-4">
+                    <DownloadButton contract={contract} />
+                  </td>
+                  <td className="px-6 py-4">
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleViewReport(contract.id)}
@@ -484,7 +673,7 @@ const DataTable = ({ className }: DataTableProps) => {
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="px-6 py-8 text-center text-gray-400">
+                <td colSpan={7} className="px-6 py-8 text-center text-gray-400">
                   {contracts.length === 0 ? "No contract reports found" : "No reports match your search criteria"}
                 </td>
               </tr>

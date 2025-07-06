@@ -2,6 +2,7 @@ import type { Config } from "tailwindcss";
 import animate from "tailwindcss-animate";
 
 export default {
+  
   darkMode: ["class"],
   content: [
     "./pages/**/*.{ts,tsx}",
@@ -19,6 +20,9 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        ibm: ['"IBM Plex Mono"', 'monospace'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -91,6 +95,7 @@ export default {
           dark: "#BE185D",
         },
       },
+     
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
@@ -102,6 +107,10 @@ export default {
         "neon-lg": "0 0 20px rgba(0, 255, 140, 0.6)",
       },
       keyframes: {
+         "bg-position": {
+         "0%": { backgroundPosition: "0% 50%" },
+          "100%": { backgroundPosition: "100% 50%" },
+         },
         "accordion-down": {
           from: { height: "0" },
           to: { height: "var(--radix-accordion-content-height)" },
@@ -151,6 +160,10 @@ export default {
           "0%": { transform: "translateY(-50%)" },
           "100%": { transform: "translateY(0)" },
         },
+        grid: {
+          "0%": { transform: "translateY(-50%)" },
+          "100%": { transform: "translateY(0)" },
+        },
       },
       animation: {
         glow: "glow 6s ease-in-out infinite",
@@ -167,6 +180,7 @@ export default {
         "scroll-up": "scrollUp 60s linear infinite",
         "scroll-down": "scrollDown 60s linear infinite",
         "scroll-up-slow": "scrollUp 80s linear infinite",
+        grid: "grid 15s linear infinite",
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

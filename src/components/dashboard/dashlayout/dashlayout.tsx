@@ -2,7 +2,8 @@
 import { ReactNode } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./header";
-import GradientBackground from "@/src/components/home/Gradient";
+import GradientBackground from "@/components/home/Gradient";
+import { SmoothCursor } from "../../ui/smooth-cursor";
 
 type DashboardLayoutProps = {
   children: ReactNode;
@@ -19,7 +20,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       {/* Content Area */}
       <div className="flex w-full min-h-screen">
         <Sidebar />
-
+        <SmoothCursor/>
         <div className="flex-1 flex flex-col relative z-10">
           <Header />
           <main className="flex-1 p-6 pt-0 z-0">

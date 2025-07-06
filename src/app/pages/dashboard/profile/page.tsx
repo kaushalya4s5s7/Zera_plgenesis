@@ -4,11 +4,11 @@
 
 import { useEffect, useState } from "react";
 import { useUser } from "@civic/auth-web3/react";
-import { useBalances } from "@/src/hooks/useBalances";
+import { useBalances } from "@/hooks/useBalances";
 import { useAccount } from "wagmi";
-import WalletInfo from "@/src/components/wallet/walletInfo"; // Import the WalletInfo component
+import WalletInfo from "@/components/wallet/walletInfo"; // Import the WalletInfo component
 import Image from "next/image"; // Use Next.js Image component for optimization
-import { StorageManager } from "@/src/components/dashboard/audit/StorageManager";
+import { StorageManager } from "@/components/dashboard/audit/StorageManager";
 
 // FIX 1: Define our own types for the expected user object structure.
 // This ensures we don't rely on a non-existent export from the library.

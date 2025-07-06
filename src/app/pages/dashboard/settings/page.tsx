@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Save } from "lucide-react";
-import DashboardLayout from "@/src/components/dashboard/dashlayout/dashlayout";
+import DashboardLayout from "@/components/dashboard/dashlayout/dashlayout";
 
 const SettingsPage = () => {
   const [settings, setSettings] = useState({

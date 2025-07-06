@@ -1,11 +1,11 @@
 import { useMutation } from "@tanstack/react-query";
-import { useEthersSigner } from "@/src/hooks/useEthers";
+import { useEthersSigner } from "@/hooks/useEthers";
 import { useState } from "react";
-import { useConfetti } from "@/src/hooks/useConfetti";
-import { useNetwork } from "@//src/hooks/useNetwork";
+import { useConfetti } from "@/hooks/useConfetti";
+import { useNetwork } from "@/hooks/useNetwork";
 import { Synapse, TOKENS, CONTRACT_ADDRESSES } from "@filoz/synapse-sdk";
-import { getPandoraAddress,PROOF_SET_CREATION_FEE,MAX_UINT256 } from "@/utils/constant";
-import { getProofset } from "@/utils/getProofset";
+import { getPandoraAddress,PROOF_SET_CREATION_FEE,MAX_UINT256 } from "utils/constant";
+import { getProofset } from "utils/getProofset";
 
 import { useAccount } from "wagmi";
 

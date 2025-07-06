@@ -2,7 +2,7 @@ import { getPandoraAddress } from "./constant";
 import { Synapse } from "@filoz/synapse-sdk";
 import { PandoraService, CONTRACT_ADDRESSES } from "@filoz/synapse-sdk";
 import { PROOF_SET_CREATION_FEE } from "./constant";
-import {config} from "@/config";
+import { config } from "../config";
 
 
 /**

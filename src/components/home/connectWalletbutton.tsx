@@ -1,6 +1,6 @@
 import React from "react";
-import { Button } from "@/src/components/ui/button";
-import { useWallet } from "@/src/hooks/useWallet";
+import { Button } from "@/components/ui/button";
+import { useWallet } from "@/hooks/useWallet";
 import { LogOut, Wallet } from "lucide-react";
 
 const ConnectWalletButton: React.FC = () => {

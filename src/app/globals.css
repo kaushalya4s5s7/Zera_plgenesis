@@ -1,5 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
 
+@custom-variant dark (&:is(.dark *));
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -167,7 +169,7 @@ main {
     transparent 80%
   );
   z-index: -1;
-  content: "";
+  
   inset: -1px;
 }
 
@@ -200,10 +202,13 @@ main {
 
 @layer utilities {
   /* Combined utility classes */
-  .font-mono {
-    font-family: "JetBrains Mono", monospace;
+
+
+  .secure{
+    font-family :"IBM Plex Mono", monospace
   }
 
+ 
   .logo-gradient-text {
     background: linear-gradient(
       135deg,
@@ -245,8 +250,7 @@ main {
   }
 
   .card-glow::before {
-    content: "";
-    @apply absolute inset-0 opacity-0 transition-opacity duration-700;
+       @apply absolute inset-0 opacity-0 transition-opacity duration-700;
     background: radial-gradient(
       circle at var(--x, 50%) var(--y, 50%),
       rgba(255, 255, 255, 0.1),
@@ -263,7 +267,6 @@ main {
   }
 
   .animated-border::after {
-    content: "";
     position: absolute;
     inset: 0;
     border-radius: var(--radius);
@@ -322,10 +325,252 @@ main {
     }
   }
 
+  /* Neon Gas Animations */
+  @keyframes neon-float {
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+      opacity: 0.3;
+    }
+    25% {
+      transform: translateY(-10px) rotate(2deg);
+      opacity: 0.6;
+    }
+    50% {
+      transform: translateY(-5px) rotate(-1deg);
+      opacity: 0.8;
+    }
+    75% {
+      transform: translateY(-15px) rotate(1deg);
+      opacity: 0.5;
+    }
+  }
+
+  @keyframes neon-pulse-slow {
+    0%,
+    100% {
+      opacity: 0.3;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.7;
+      transform: scale(1.05);
+    }
+  }
+
+  @keyframes neon-drift {
+    0% {
+      transform: translateX(0px) translateY(0px) rotate(0deg);
+      opacity: 0.4;
+    }
+    33% {
+      transform: translateX(20px) translateY(-10px) rotate(5deg);
+      opacity: 0.8;
+    }
+    66% {
+      transform: translateX(-15px) translateY(5px) rotate(-3deg);
+      opacity: 0.6;
+    }
+    100% {
+      transform: translateX(0px) translateY(0px) rotate(0deg);
+      opacity: 0.4;
+    }
+  }
+
+  @keyframes neon-glow {
+    0%,
+    100% {
+      box-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor;
+    }
+    50% {
+      box-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
+    }
+  }
+
+  /* Wave-like neon gas animations */
+  @keyframes neon-wave {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px) scale(1);
+      opacity: 0.4;
+    }
+    25% {
+      transform: translateY(-15px) translateX(5px) scale(1.02);
+      opacity: 0.7;
+    }
+    50% {
+      transform: translateY(-8px) translateX(-3px) scale(0.98);
+      opacity: 0.8;
+    }
+    75% {
+      transform: translateY(-20px) translateX(8px) scale(1.05);
+      opacity: 0.6;
+    }
+  }
+
+  @keyframes neon-wave-reverse {
+    0%,
+    100% {
+      transform: translateY(0px) translateX(0px) scale(1);
+      opacity: 0.5;
+    }
+    25% {
+      transform: translateY(10px) translateX(-5px) scale(0.95);
+      opacity: 0.8;
+    }
+    50% {
+      transform: translateY(18px) translateX(7px) scale(1.03);
+      opacity: 0.7;
+    }
+    75% {
+      transform: translateY(5px) translateX(-8px) scale(0.98);
+      opacity: 0.6;
+    }
+  }
+
+  @keyframes neon-flow {
+    0% {
+      transform: translateX(0px) translateY(0px) rotate(0deg);
+      opacity: 0.3;
+    }
+    33% {
+      transform: translateX(15px) translateY(-10px) rotate(2deg);
+      opacity: 0.7;
+    }
+    66% {
+      transform: translateX(-10px) translateY(8px) rotate(-1deg);
+      opacity: 0.8;
+    }
+    100% {
+      transform: translateX(0px) translateY(0px) rotate(0deg);
+      opacity: 0.3;
+    }
+  }
+
   .typing-animation {
     display: inline-block;
     overflow: hidden;
     white-space: nowrap;
     animation: typing 3s steps(40, end);
   }
+
+  .animate-neon-float {
+    animation: neon-float 8s ease-in-out infinite;
+  }
+
+  .animate-neon-pulse-slow {
+    animation: neon-pulse-slow 6s ease-in-out infinite;
+  }
+
+  .animate-neon-drift {
+    animation: neon-drift 12s ease-in-out infinite;
+  }
+
+  .animate-neon-glow {
+    animation: neon-glow 4s ease-in-out infinite;
+  }
+
+  .animate-neon-wave {
+    animation: neon-wave 10s ease-in-out infinite;
+  }
+
+  .animate-neon-wave-reverse {
+    animation: neon-wave-reverse 12s ease-in-out infinite;
+  }
+
+  .animate-neon-flow {
+    animation: neon-flow 8s ease-in-out infinite;
+  }
+
+  /* Gradient utilities for neon gas */
+  .bg-gradient-radial {
+    background: radial-gradient(circle, var(--tw-gradient-stops));
+  }
+}
+
+@theme inline {
+  --animate-grid: grid 15s linear infinite;
+  @keyframes grid {
+  0% {
+    transform: translateY(-50%);
+    }
+  100% {
+    transform: translateY(0);
+    }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+/* styles/globals.css or app/globals.css */
+
+.glow-button {
+  --glow-color: rgb(217, 176, 255);
+  --glow-spread-color: rgba(191, 123, 255, 0.781);
+  --enhanced-glow-color: rgb(231, 206, 255);
+  --btn-color: rgb(100, 61, 136);
+  border: 0.25em solid var(--glow-color);
+  padding: 1em 3em;
+  color: var(--glow-color);
+  font-size: 15px;
+  font-weight: bold;
+  background-color: var(--btn-color);
+  border-radius: 1em;
+  outline: none;
+  box-shadow: 
+    0 0 1em 0.25em var(--glow-color),
+    0 0 4em 1em var(--glow-spread-color),
+    inset 0 0 0.75em 0.25em var(--glow-color);
+  text-shadow: 0 0 0.5em var(--glow-color);
+  position: relative;
+  transition: all 0.3s;
+}
+
+.glow-button::after {
+  pointer-events: none;
+  position: absolute;
+  top: 120%;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: var(--glow-spread-color);
+  filter: blur(2em);
+  opacity: 0.7;
+  transform: perspective(1.5em) rotateX(35deg) scale(1, 0.6);
+}
+
+.glow-button:hover {
+  color: var(--btn-color);
+  background-color: var(--glow-color);
+  box-shadow: 
+    0 0 1em 0.25em var(--glow-color),
+    0 0 4em 2em var(--glow-spread-color),
+    inset 0 0 0.75em 0.25em var(--glow-color);
+}
+
+.glow-button:active {
+  box-shadow: 
+    0 0 0.6em 0.25em var(--glow-color),
+    0 0 2.5em 2em var(--glow-spread-color),
+    inset 0 0 0.5em 0.25em var(--glow-color);
+}
+
+/* Premium gradient animations for pricing title */
+@keyframes gradient-shift {
+  0%, 100% { 
+    background-position: 0% 50%; 
+  }
+  50% { 
+    background-position: 100% 50%; 
+  }
+}
+
+.animate-gradient-shift {
+  animation: gradient-shift 4s ease-in-out infinite;
 }

@@ -1,6 +1,6 @@
 "use client";
-import DashboardLayout from "@/src/components/dashboard/dashlayout/dashlayout";
-import DataTable from "@/src/components/dashboard/reports/DataTable";
+import DashboardLayout from "@/components/dashboard/dashlayout/dashlayout";
+import DataTable from "@/components/dashboard/reports/DataTable";
 
 const ReportsPage = () => {
   return (

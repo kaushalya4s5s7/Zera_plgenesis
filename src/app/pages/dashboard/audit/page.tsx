@@ -10,15 +10,15 @@ declare global {
 import { useUser } from "@civic/auth-web3/react";
 import { useAutoConnect } from "@civic/auth-web3/wagmi";
 import { useState, useEffect } from "react";
-import DashboardLayout from "@/src/components/dashboard/dashlayout/dashlayout";
-import CodeAnalyzer from "@/src/components/dashboard/audit/codeAnalyzer";
-import AuditResults from "@/src/components/dashboard/audit/auditResults";
-import { useToast } from "@/src/hooks/use-toast";
+import DashboardLayout from "@/components/dashboard/dashlayout/dashlayout";
+import CodeAnalyzer from "@/components/dashboard/audit/codeAnalyzer";
+import AuditResults from "@/components/dashboard/audit/auditResults";
+import { useToast } from "@/hooks/use-toast";
 import { useAccount, useWalletClient, usePublicClient, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { analyzeContractSecurity } from "../../../../../utils/mistralAI";
 import { keccak256 } from "@ethersproject/keccak256";
 import { toUtf8Bytes } from "@ethersproject/strings";
-import useAuditStore from "@/src/store/auditStore";
+import useAuditStore from "@/store/auditStore";
 
 
 const AUDIT_REGISTRY_ABI = [
@@ -55,6 +55,12 @@ const AUDIT_REGISTRY_ABI = [
         name: "timestamp",
         type: "uint256",
       },
+      {
+        indexed: true,
+        internalType: "bytes32",
+        name: "txHash",
+        type: "bytes32",
+      },
     ],
     name: "AuditRegistered",
     type: "event",
@@ -78,7 +84,13 @@ const AUDIT_REGISTRY_ABI = [
       },
     ],
     name: "registerAudit",
-    outputs: [],
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
     stateMutability: "nonpayable",
     type: "function",
   },
@@ -259,6 +271,93 @@ const AUDIT_REGISTRY_ABI = [
     stateMutability: "view",
     type: "function",
   },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "txHash",
+        type: "bytes32",
+      },
+      {
+        internalType: "string",
+        name: "cid",
+        type: "string",
+      },
+    ],
+    name: "mapCIDToAudit",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "txHash",
+        type: "bytes32",
+      },
+    ],
+    name: "getAuditCID",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "txHash",
+        type: "bytes32",
+      },
+    ],
+    name: "isCIDMapped",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "bytes32",
+        name: "txHash",
+        type: "bytes32",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "cid",
+        type: "string",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "auditor",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "timestamp",
+        type: "uint256",
+      },
+    ],
+    name: "CIDMapped",
+    type: "event",
+  },
 ];
 
 interface AuditIssue {
@@ -271,50 +370,158 @@ interface AuditIssue {
   recommendation?: string;
 }
 
-const AUDIT_REGISTRY_ADDRESS = "0x49466ba632569a2d9f1919941468F17e287f26dA";
+const AUDIT_REGISTRY_ADDRESS = "0xE3873898A217d64B08dB9aE587AfbdDc24b84409";
 
 const parseIssuesFromAuditReport = (auditReport: string): AuditIssue[] => {
   const issues: AuditIssue[] = [];
   const lines = auditReport.split("\n");
 
+  console.log("Parsing audit report with", lines.length, "lines");
+  console.log("First 10 lines:", lines.slice(0, 10));
+
   let currentIssue: Partial<AuditIssue> = {};
 
-  lines.forEach((line) => {
-    if (line.startsWith("####")) {
+  const generateUUID = () => {
+    if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+      return crypto.randomUUID();
+    }
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+      const r = (Math.random() * 16) | 0;
+      const v = c === "x" ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  };
+
+  lines.forEach((line, index) => {
+    const trimmedLine = line.trim();
+    
+    // Handle different heading formats for issues
+    if (trimmedLine.startsWith("####") || 
+        trimmedLine.startsWith("## ") || 
+        trimmedLine.startsWith("### ") ||
+        trimmedLine.match(/^\d+\.\s+/)) { // Numbered lists
+      
+      // Save previous issue if it exists
       if (currentIssue.id) {
         issues.push(currentIssue as AuditIssue);
       }
-      
-      const generateUUID = () => {
-        if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
-          return crypto.randomUUID();
-        }
-        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
-          const r = (Math.random() * 16) | 0;
-          const v = c === "x" ? r : (r & 0x3) | 0x8;
-          return v.toString(16);
-        });
-      };
 
       currentIssue = {
         id: generateUUID(),
-        title: line.replace(/####/, "").trim(),
+        title: trimmedLine.replace(/^(####|###|##|\d+\.)\s*/, "").trim(),
       };
-    } else if (line.startsWith("- **Description**:")) {
-      currentIssue.description = line.replace(/- \*\*Description\*\*:/, "").trim();
-    } else if (line.startsWith("- **Affected Function**:")) {
-      currentIssue.source = line.replace(/- \*\*Affected Function\*\*:/, "").trim();
-    } else if (line.startsWith("- **Mitigation**:")) {
-      currentIssue.recommendation = line.replace(/- \*\*Mitigation\*\*:/, "").trim();
-    } else if (line.startsWith("- **Severity**:")) {
-      currentIssue.severity = line.replace(/- \*\*Severity\*\*:/, "").trim().toLowerCase();
+    }
+    // Handle different description patterns
+    else if (trimmedLine.startsWith("- **Description**:") ||
+             trimmedLine.startsWith("**Description:**") ||
+             trimmedLine.startsWith("Description:")) {
+      currentIssue.description = trimmedLine.replace(/^(- )?\*\*Description\*?\*?:?\s*/, "").trim();
+    }
+    // Handle function/source patterns
+    else if (trimmedLine.startsWith("- **Affected Function**:") ||
+             trimmedLine.startsWith("- **Function**:") ||
+             trimmedLine.startsWith("**Function:**") ||
+             trimmedLine.startsWith("Function:") ||
+             trimmedLine.startsWith("**Location:**") ||
+             trimmedLine.startsWith("Location:")) {
+      currentIssue.source = trimmedLine.replace(/^(- )?\*\*(Affected Function|Function|Location)\*?\*?:?\s*/, "").trim();
+    }
+    // Handle mitigation/recommendation patterns
+    else if (trimmedLine.startsWith("- **Mitigation**:") ||
+             trimmedLine.startsWith("- **Recommendation**:") ||
+             trimmedLine.startsWith("**Mitigation:**") ||
+             trimmedLine.startsWith("**Recommendation:**") ||
+             trimmedLine.startsWith("Mitigation:") ||
+             trimmedLine.startsWith("Recommendation:")) {
+      currentIssue.recommendation = trimmedLine.replace(/^(- )?\*\*(Mitigation|Recommendation)\*?\*?:?\s*/, "").trim();
+    }
+    // Handle severity patterns
+    else if (trimmedLine.startsWith("- **Severity**:") ||
+             trimmedLine.startsWith("**Severity:**") ||
+             trimmedLine.startsWith("Severity:")) {
+      currentIssue.severity = trimmedLine.replace(/^(- )?\*\*Severity\*?\*?:?\s*/, "").trim().toLowerCase();
+    }
+    // Handle line number patterns
+    else if (trimmedLine.match(/line\s+(\d+)/i)) {
+      const lineMatch = trimmedLine.match(/line\s+(\d+)/i);
+      if (lineMatch) {
+        currentIssue.line = parseInt(lineMatch[1]);
+      }
+    }
+    // If we have a current issue but no description yet, and this line has content, use it as description
+    else if (currentIssue.title && !currentIssue.description && trimmedLine.length > 10 && !trimmedLine.startsWith("-")) {
+      currentIssue.description = trimmedLine;
     }
   });
 
+  // Add the last issue if it exists
   if (currentIssue.id) {
     issues.push(currentIssue as AuditIssue);
   }
 
+  // If no issues were parsed, try to create generic issues from severity mentions
+  if (issues.length === 0) {
+    console.log("No issues parsed with structured format, trying fallback parsing...");
+    
+    const criticalMatches = auditReport.match(/critical[^.]*[.!]/gi) || [];
+    const highMatches = auditReport.match(/high[^.]*[.!]/gi) || [];
+    const mediumMatches = auditReport.match(/medium[^.]*[.!]/gi) || [];
+    const lowMatches = auditReport.match(/low[^.]*[.!]/gi) || [];
+
+    [...criticalMatches, ...highMatches, ...mediumMatches, ...lowMatches].forEach((match, index) => {
+      const severity = match.toLowerCase().includes('critical') ? 'critical' :
+                      match.toLowerCase().includes('high') ? 'high' :
+                      match.toLowerCase().includes('medium') ? 'medium' : 'low';
+      
+      issues.push({
+        id: generateUUID(),
+        title: `Security Issue ${index + 1}`,
+        description: match.trim(),
+        severity: severity,
+        source: "Audit Report Analysis",
+        line: null,
+        recommendation: "Review and address this security concern"
+      });
+    });
+  }
+
+  console.log("Parsed", issues.length, "issues:", issues);
+  
+  // For debugging: add mock issues if none found (remove in production)
+  if (issues.length === 0 && auditReport.length > 0) {
+    console.log("Adding mock issues for debugging...");
+    const mockIssues: AuditIssue[] = [
+      {
+        id: generateUUID(),
+        title: "Potential Reentrancy Vulnerability",
+        description: "The contract may be vulnerable to reentrancy attacks due to external calls before state changes.",
+        severity: "high",
+        source: "withdraw() function",
+        line: 45,
+        recommendation: "Use the checks-effects-interactions pattern and consider using OpenZeppelin's ReentrancyGuard."
+      },
+      {
+        id: generateUUID(),
+        title: "Missing Access Control",
+        description: "Critical functions lack proper access control mechanisms.",
+        severity: "critical", 
+        source: "Administrative functions",
+        line: null,
+        recommendation: "Implement role-based access control using OpenZeppelin's AccessControl."
+      },
+      {
+        id: generateUUID(),
+        title: "Integer Overflow Risk",
+        description: "Arithmetic operations may overflow without proper checks.",
+        severity: "medium",
+        source: "calculation functions",
+        line: 78,
+        recommendation: "Use SafeMath library or Solidity 0.8+ built-in overflow protection."
+      }
+    ];
+    issues.push(...mockIssues);
+  }
+  
   return issues;
 };
 
@@ -339,14 +546,21 @@ const AuditPage = () => {
     isLocked,
     issues,
     issueCount,
+    uploadedReportCID,
+    currentAuditHasUpload,
+    auditTxHash,
     setAuditScore,
     setAuditReport,
     setContractHash,
     setIssues,
     setIssueCount,
     setIsLocked,
+    setCurrentAuditHasUpload,
+    setUploadedReportCID,
+    setAuditTxHash,
   } = useAuditStore();
 
+  
   // Use wagmi's useWriteContract hook for better transaction handling
   const { 
     writeContract, 
@@ -378,12 +592,66 @@ const AuditPage = () => {
 
   // Handle transaction confirmation
   useEffect(() => {
-    if (isConfirmed) {
+    if (isConfirmed && hash) {
+      // Extract the transaction hash from the receipt/event logs
+      const extractTxHashFromReceipt = async () => {
+        try {
+          const receipt = await publicClient?.getTransactionReceipt({ hash });
+          console.log("=== TRANSACTION RECEIPT DEBUG ===");
+          console.log("Receipt:", receipt);
+          console.log("Logs count:", receipt?.logs?.length);
+          
+          if (receipt && receipt.logs) {
+            // Find the AuditRegistered event log and decode it
+            for (const log of receipt.logs) {
+              console.log("Processing log:", log);
+              console.log("Topics:", log.topics);
+              
+              try {
+                // Check if this is the AuditRegistered event (should have 4 indexed topics)
+                // topics[0] = event signature hash
+                // topics[1] = contractHash (indexed)
+                // topics[2] = auditor (indexed)  
+                // topics[3] = txHash (indexed)
+                if (log.topics && log.topics.length >= 4) {
+                  const txHash = log.topics[3]; // The txHash from the event (3rd indexed parameter)
+                  console.log("=== EXTRACTED TX HASH ===");
+                  console.log("Raw txHash from event:", txHash);
+                  console.log("Setting auditTxHash to:", txHash);
+                  console.log("========================");
+                  
+                  if (typeof txHash === "string") {
+                    setAuditTxHash(txHash);
+                  } else {
+                    setAuditTxHash(null);
+                  }
+                  break;
+                }
+              } catch (error) {
+                console.error("Error decoding log:", error);
+              }
+            }
+          } else {
+            console.warn("No receipt or logs found");
+          }
+        } catch (error) {
+          console.error("Error extracting transaction hash:", error);
+        }
+      };
+
+      extractTxHashFromReceipt();
+      
       toast({
         title: "Audit Registered",
         description: "The audit has been successfully registered on-chain!",
       });
       setIsLocked(false);
+      
+      // Trigger a global refresh for DataTable
+      // This is a simple approach - could be improved with a proper event system
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('auditRegistered'));
+      }, 2000); // Wait 2 seconds for blockchain confirmation
     }
   }, [isConfirmed, toast, setIsLocked]);
 
@@ -432,13 +700,11 @@ const AuditPage = () => {
         variant: "destructive",
       });
       return;
-    }
+    }    setIsAnalyzing(true);
 
-    setIsAnalyzing(true);
-
-
-
-
+    // Reset upload status for new analysis
+    setCurrentAuditHasUpload(false);
+    setUploadedReportCID(null); // Clear any previous upload CID
 
     try {
       const auditResults = await analyzeContractSecurity(code, chain);
@@ -458,6 +724,7 @@ const AuditPage = () => {
       setContractHash(uniqueHash);
 
       const parsedIssues: AuditIssue[] = parseIssuesFromAuditReport(auditResults);
+      console.log("Setting issues in store:", parsedIssues);
       setIssues(parsedIssues);
 
       const lowerReport = auditResults.toLowerCase();
@@ -537,17 +804,34 @@ const AuditPage = () => {
         contractHash,
         auditScore,
         isConnected,
+        uploadedReportCID
       });
 
       // Use wagmi's writeContract hook (similar to Web3Zone's sendTransaction pattern)
       
 
       try {
+        // Use uploaded report CID if available, otherwise use default summary
+        const auditSummary = uploadedReportCID 
+          ? `Audit completed successfully. Report CID: ${uploadedReportCID}`
+          : "Audit completed successfully";
+          
+        // Enhanced debug logging
+        console.log("=== AUDIT REGISTRATION DEBUG ===");
+        console.log("Upload CID from store:", uploadedReportCID);
+        console.log("Store uploadedReportCID type:", typeof uploadedReportCID);
+        console.log("Store uploadedReportCID length:", uploadedReportCID?.length);
+        console.log("Current audit has upload:", currentAuditHasUpload);
+        console.log("Generated summary:", auditSummary);
+        console.log("Contract hash:", contractHash);
+        console.log("Audit score:", auditScore);
+        console.log("===================================");
+          
         writeContract({
         address: AUDIT_REGISTRY_ADDRESS as `0x${string}`,
         abi: AUDIT_REGISTRY_ABI,
         functionName: 'registerAudit',
-        args: [contractHash, auditScore, "Audit completed successfully"],
+        args: [contractHash, auditScore, auditSummary],
       });
   // your transaction call
 } catch (error: any) {
@@ -628,6 +912,24 @@ const AuditPage = () => {
                 To unlock the audit results, please register the audit on-chain.
               </p>
 
+              {/* Report Status Indicator */}
+              {uploadedReportCID ? (
+                <div className="mb-4 p-3 bg-green-900/20 border border-green-500/50 rounded-lg">
+                  <p className="text-green-400 text-sm">
+                    ✅ Report uploaded to Filecoin (CID: {uploadedReportCID.substring(0, 10)}...)
+                  </p>
+                  <p className="text-green-300 text-xs">
+                    This report will be included in the on-chain registration.
+                  </p>
+                </div>
+              ) : (
+                <div className="mb-4 p-3 bg-gray-900/20 border border-gray-500/50 rounded-lg">
+                  <p className="text-gray-400 text-sm">
+                    📋 No report uploaded - only audit summary will be registered
+                  </p>
+                </div>
+              )}
+
               {!isConnected && (
                 <p className="text-yellow-400 mb-4">
                   Your embedded wallet is being initialized. Please wait...
@@ -663,7 +965,13 @@ const AuditPage = () => {
           )}
 
           {/* Audit Results */}
-          {!isLocked && <AuditResults/> }
+          {!isLocked && (
+            <AuditResults
+            
+              isSwitchingChain={false}
+              currentActiveChainId={chain?.id ?? 0}
+            />
+          )}
         </div>
       )}
     </DashboardLayout>

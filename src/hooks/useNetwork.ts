@@ -1,4 +1,4 @@
-// src/hooks/useNetwork.ts
+// @/hooks/useNetwork.ts
 
 import { useQuery } from "@tanstack/react-query";
 import { useAccount } from "wagmi";

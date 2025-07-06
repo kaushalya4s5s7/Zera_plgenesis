@@ -1,11 +1,11 @@
 "use client";
 
 import { useAccount } from "wagmi";
-import { useBalances } from "@/src/hooks/useBalances";
-import { usePayment } from "@/src/hooks/usePayment";
-import { config } from "@/config";
+import { useBalances } from "@/hooks/useBalances";
+import { usePayment } from "@/hooks/usePayment";
+import { config } from "config";
 import { formatUnits } from "viem";
-import { AllowanceItemProps, PaymentActionProps, SectionProps } from "@/src/types";
+import { AllowanceItemProps, PaymentActionProps, SectionProps } from "@/types";
 
 /**
  * Component to display and manage token payments for storage

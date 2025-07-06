@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
 import { Sparkles, Loader2 } from "lucide-react";
-import DashboardLayout from "@/src/components/dashboard/dashlayout/dashlayout";
-import ContractTemplateSelector from "@/src/components/dashboard/build/contractTemplateSelector";
-import CodeEditor from "@/src/components/dashboard/build/codeEditor";
-import { useToast } from "@/src/hooks/use-toast";
+import DashboardLayout from "@/components/dashboard/dashlayout/dashlayout";
+import ContractTemplateSelector from "@/components/dashboard/build/contractTemplateSelector";
+import CodeEditor from "@/components/dashboard/build/codeEditor";
+import { useToast } from "@/hooks/use-toast";
 import { generateSmartContract } from "../../../../utils/mistralAI";
 
 const BuildPage = () => {

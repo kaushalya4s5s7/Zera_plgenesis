@@ -8,10 +8,10 @@ import {
   Settings,
   Mail,
 } from "lucide-react";
-import { useToast } from "@/src/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { UserButton } from "@civic/auth-web3/react";
 import Link from "next/link";
-import DashboardButton from "@/src/components/home/dashboardbutton";
+import DashboardButton from "@/components/home/dashboardbutton";
 
 const Header = () => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);

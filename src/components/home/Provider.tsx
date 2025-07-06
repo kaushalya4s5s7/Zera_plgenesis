@@ -12,11 +12,12 @@ import {
   arbitrum,
   optimism,
   polygonMumbai,
-filecoinCalibration,
+  filecoinCalibration,
+  arbitrumSepolia, // ✅ Import Arbitrum Sepolia
 } from "wagmi/chains";
 import { embeddedWallet } from "@civic/auth-web3/wagmi";
 import Navbar from "./navbar";
-import { ConfettiProvider } from "@/src/providers/ConfettiProvider";
+import { ConfettiProvider } from "@/providers/ConfettiProvider";
 
 // ✅ Define all supported chains
 export const supportedChains = [
@@ -27,6 +28,7 @@ export const supportedChains = [
   optimism,
   polygonMumbai,
   filecoinCalibration,
+  arbitrumSepolia, // ✅ Added here
 ] as [Chain, ...Chain[]];
 
 // ✅ Setup RPC transports for each chain
@@ -39,7 +41,8 @@ const wagmiConfig = createConfig({
     [arbitrum.id]: http(),
     [optimism.id]: http(),
     [polygonMumbai.id]: http(),
-    [filecoinCalibration.id]: http()
+    [filecoinCalibration.id]: http(),
+    [arbitrumSepolia.id]: http(), // ✅ Register RPC transport
   },
   connectors: [embeddedWallet()],
 });
@@ -64,7 +67,7 @@ const Provider: FC<ProvidersProps> = ({ children }) => {
         <WagmiProvider config={wagmiConfig}>
           <CivicAuthProvider
             clientId="7ed6d5cd-300f-415c-bcc0-69c399ec465d"
-            initialChain={sepolia} // 🟡 Can be set dynamically if needed
+            initialChain={sepolia} // ✅ You can set to arbitrumSepolia if needed
           >
             {children}
           </CivicAuthProvider>

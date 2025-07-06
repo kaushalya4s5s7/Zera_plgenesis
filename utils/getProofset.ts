@@ -1,8 +1,8 @@
-// src/utils/getProofset.ts
+// @/utils/getProofset.ts
 
 import { CONTRACT_ADDRESSES, PandoraService } from "@filoz/synapse-sdk";
 import { JsonRpcSigner } from "ethers";
-import { config } from "@/config";
+import { config } from "../config";
 
 export const getProofset = async (
   signer: JsonRpcSigner,
