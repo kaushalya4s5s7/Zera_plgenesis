@@ -9,9 +9,16 @@ import BackgroundPath from "../ui/BackgroundPath";
 import Counter from "../ui/counter";
 import { useState } from "react";
 import { ContainerScroll } from "../ui/container-scroll-animation";
+import { Silkscreen } from "next/font/google";
+
+const silkscreen = Silkscreen({
+  subsets: ["latin"],
+  weight: "400",
+});
 
  
 import { TextGif } from "../ui/text-gif"; 
+import { Lights } from "../ui/Lights";
 
 const Hero = () => {
   const [text, setText] = useState("TextGif")
@@ -28,6 +35,42 @@ const Hero = () => {
   const [selectedGif, setSelectedGif] = useState(gifUrls[0]);
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden bg-black">
+      {/* Minimalistic Dot Grid Background - Web3 Security Theme */}
+      <div 
+        className="absolute inset-0 z-0 dot-grid-animated dot-grid-pulse"
+        style={{
+          backgroundImage: `radial-gradient(circle at 2px 2px, rgba(14, 165, 233, 0.12) 2px, transparent 2px)`,
+          backgroundSize: '28px 28px',
+          backgroundPosition: '0 0',
+          maskImage: 'radial-gradient(ellipse 85% 65% at 50% 40%, black 30%, rgba(0,0,0,0.7) 50%, transparent 75%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 85% 65% at 50% 40%, black 30%, rgba(0,0,0,0.7) 50%, transparent 75%)',
+        }}
+      />
+      
+      {/* Enhanced responsive dot grid overlay for mobile and large screens */}
+      <div 
+        className="absolute inset-0 z-0 md:hidden dot-grid-mobile"
+        style={{
+          backgroundImage: `radial-gradient(circle at 1.5px 1.5px, rgba(14, 165, 233, 0.08) 1.5px, transparent 1.5px)`,
+          backgroundSize: '20px 20px',
+          backgroundPosition: '0 0',
+          maskImage: 'radial-gradient(ellipse 90% 75% at 50% 45%, black 25%, rgba(0,0,0,0.6) 45%, transparent 65%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 90% 75% at 50% 45%, black 25%, rgba(0,0,0,0.6) 45%, transparent 65%)',
+        }}
+      />
+
+      {/* Large screen enhanced dot grid */}
+      <div 
+        className="absolute inset-0 z-0 hidden xl:block dot-grid-large"
+        style={{
+          backgroundImage: `radial-gradient(circle at 2.5px 2.5px, rgba(195, 201, 204, 0.15) 2.5px, transparent 2.5px)`,
+          backgroundSize: '32px 32px',
+          backgroundPosition: '0 0',
+          maskImage: 'radial-gradient(ellipse 80% 60% at 50% 38%, black 35%, rgba(0,0,0,0.8) 55%, transparent 80%)',
+          WebkitMaskImage: 'radial-gradient(ellipse 80% 60% at 50% 38%, black 35%, rgba(0,0,0,0.8) 55%, transparent 80%)',
+        }}
+      />
+      
       <BackgroundPath/>
       {/* RetroGrid Background - Full Screen */}
       {/* <RetroGrid 
@@ -39,42 +82,17 @@ const Hero = () => {
         opacity={0.6}
       /> */}
 
-      {/* Neon Gas Effects */}
+      {/* Cohesive accent lighting - Web3 Security Theme */}
       <div className="absolute inset-0 z-5">
-                  <BackgroundPath/>
-
-        {/* Main neon gas clouds with wave animations */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-blue-500 blur-3xl animate-float opacity-60" style={{ animationDelay: '0s' }}></div>
-        <div className="absolute bottom-1/3 right-1/4 w-80 h-80 rounded-full bg-purple-500 blur-3xl animate-float-slow opacity-50" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-cyan-400/5 blur-3xl animate-float opacity-40" style={{ animationDelay: '1s' }}></div>
+        {/* Primary security accent - Sky Blue */}
+        <div className="absolute top-1/3 left-1/4 w-96 h-96 rounded-full bg-sky-500/8 blur-3xl animate-pulse opacity-60"></div>
+        <div className="absolute bottom-1/3 right-1/4 w-80 h-80 rounded-full bg-blue-500/6 blur-3xl animate-pulse opacity-50" style={{ animationDelay: '2s' }}></div>
         
-        {/* Neon gas trails with flowing wave animations */}
-        <div className="absolute top-20 left-10 w-32 h-4 bg-blue-400/20 rounded-full blur-xl animate-float opacity-30" style={{ transform: 'rotate(-15deg)', animationDelay: '0.5s' }}></div>
-        <div className="absolute top-40 right-20 w-24 h-3 bg-purple-400/15 rounded-full blur-lg animate-float-slow opacity-25" style={{ transform: 'rotate(25deg)', animationDelay: '1.5s' }}></div>
-        <div className="absolute bottom-32 left-20 w-20 h-2 bg-cyan-300/20 rounded-full blur-md animate-float opacity-20" style={{ animationDelay: '0.8s' }}></div>
-        <div className="absolute bottom-20 right-10 w-28 h-3 bg-blue-300/18 rounded-full blur-lg animate-float-slow opacity-35" style={{ transform: 'rotate(-30deg)', animationDelay: '2.2s' }}></div>
+        {/* Central security focus glow */}
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] rounded-full bg-gradient-radial from-sky-500/4 via-blue-500/2 to-transparent blur-3xl"></div>
         
-        {/* Floating neon particles with wave effects */}
-        <div className="absolute top-16 left-1/3 w-3 h-3 bg-blue-400 rounded-full blur-sm animate-float opacity-70" style={{ boxShadow: '0 0 10px rgba(59, 130, 246, 0.8), 0 0 20px rgba(59, 130, 246, 0.4)', animationDelay: '0.3s' }}></div>
-        <div className="absolute top-32 right-1/3 w-2 h-2 bg-purple-400 rounded-full blur-sm animate-float-slow opacity-60" style={{ boxShadow: '0 0 8px rgba(147, 51, 234, 0.6), 0 0 16px rgba(147, 51, 234, 0.3)', animationDelay: '1.8s' }}></div>
-        <div className="absolute bottom-24 left-1/5 w-4 h-4 bg-cyan-300 rounded-full blur-sm animate-float opacity-65" style={{ boxShadow: '0 0 12px rgba(34, 211, 238, 0.7), 0 0 24px rgba(34, 211, 238, 0.4)', animationDelay: '1.2s' }}></div>
-        <div className="absolute bottom-40 right-1/5 w-2 h-2 bg-blue-300 rounded-full blur-sm animate-float-slow opacity-50" style={{ boxShadow: '0 0 6px rgba(59, 130, 246, 0.5), 0 0 12px rgba(59, 130, 246, 0.3)', animationDelay: '2.5s' }}></div>
-        
-        {/* Neon gas streams */}
-        <div className="absolute top-0 left-1/4 w-1 h-32 bg-gradient-to-b from-blue-400/30 to-transparent blur-sm opacity-40"></div>
-        <div className="absolute top-0 right-1/3 w-1 h-24 bg-gradient-to-b from-purple-400/25 to-transparent blur-sm opacity-35"></div>
-        <div className="absolute bottom-0 left-1/3 w-1 h-28 bg-gradient-to-t from-cyan-400/20 to-transparent blur-sm opacity-30"></div>
-        
-        {/* Large atmospheric neon glow with wave effect */}
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-gradient-radial from-blue-500/5 via-purple-500/3 to-transparent blur-3xl animate-float opacity-60" style={{ animationDelay: '1.5s' }}></div>
-        
-        {/* Additional floating neon wisps with wave movements */}
-        <div className="absolute top-1/3 left-2/3 w-6 h-6 bg-blue-300 rounded-full blur-md animate-float-slow opacity-40" style={{ boxShadow: '0 0 15px rgba(59, 130, 246, 0.6)', animationDelay: '0.7s' }}></div>
-        <div className="absolute bottom-1/3 right-2/3 w-5 h-5 bg-purple-300 rounded-full blur-md animate-float opacity-35" style={{ boxShadow: '0 0 12px rgba(147, 51, 234, 0.5)', animationDelay: '2.8s' }}></div>
-        
-        {/* Extra wave elements for more fluid motion */}
-        <div className="absolute top-3/4 left-1/5 w-16 h-3 bg-blue-200 rounded-full blur-lg animate-float-slow opacity-25" style={{ transform: 'rotate(20deg)', animationDelay: '1.7s' }}></div>
-        <div className="absolute top-1/5 right-1/5 w-12 h-2 bg-purple-200 rounded-full blur-md animate-float opacity-20" style={{ transform: 'rotate(-35deg)', animationDelay: '3.1s' }}></div>
+        {/* Subtle cyan accents for modern feel */}
+        <div className="absolute top-20 right-1/3 w-64 h-64 rounded-full bg-cyan-400/3 blur-3xl animate-pulse opacity-40" style={{ animationDelay: '1s' }}></div>
       </div>
 
       {/* Blue Light Border Effect */}
@@ -96,41 +114,39 @@ const Hero = () => {
       </div> */}
       {/* </div> */}
 
-      {/* Animated Background Elements */}
+      {/* Refined animated elements - Security theme */}
       <div className="absolute inset-0 overflow-hidden z-20">
-        {/* <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-blue-500/5 blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full bg-blue-400/5 blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-gradient-conic from-blue-500/5 via-transparent to-blue-400/5 blur-2xl animate-spin-slow"></div>
+        {/* Subtle security-themed floating elements */}
+        <div className="absolute top-20 left-10 w-1 h-1 bg-sky-400/40 rounded-full animate-pulse opacity-70"></div>
+        <div className="absolute top-40 right-20 w-1 h-1 bg-blue-400/50 rounded-full animate-pulse opacity-60" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute bottom-32 left-20 w-1 h-1 bg-cyan-400/40 rounded-full animate-pulse opacity-65" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute bottom-20 right-10 w-1 h-1 bg-sky-300/50 rounded-full animate-pulse opacity-55" style={{ animationDelay: '0.5s' }}></div>
         
-        {/* Floating particles */}
-        {/* <div className="absolute top-20 left-10 w-2 h-2 bg-blue-300/60 rounded-full animate-float opacity-60"></div>
-        <div className="absolute top-40 right-20 w-3 h-3 bg-blue-400/40 rounded-full animate-float-slow opacity-40"></div>
-        <div className="absolute bottom-32 left-20 w-1 h-1 bg-white/60 rounded-full animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-2 h-2 bg-blue-200/50 rounded-full animate-bounce opacity-50"></div>
-          */}
-        {/* Grid pattern overlay */}
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(59,130,246,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(59,130,246,0.03)_1px,transparent_1px)] bg-[size:100px_100px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_110%)]"></div>
+        {/* Additional micro-animations for depth */}
+        <div className="absolute top-1/3 left-1/3 w-0.5 h-0.5 bg-blue-300/60 rounded-full animate-pulse opacity-40" style={{ animationDelay: '3s' }}></div>
+        <div className="absolute bottom-1/3 right-1/3 w-0.5 h-0.5 bg-sky-200/60 rounded-full animate-pulse opacity-45" style={{ animationDelay: '1.5s' }}></div>
       </div>
 
       <div className="container mx-auto px-4 relative z-30">
         <div className="text-center max-w-6xl mx-auto">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 mt-2 pd-4 bg-black-900/60 backdrop-blur-md border border-blue-400/20 rounded-full px-6 py-6 mb-8 animate-fade-in shadow-lg shadow-blue-400/10">
-            <span className="text-sm font-medium text-gray-200">Next-Gen Web3 Security Platform</span>
-            <div className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></div>
+          {/* Premium Web3 Security Badge */}
+          <div className="inline-flex items-center gap-3 mt-2 pd-4 bg-slate-900/80 backdrop-blur-md border border-sky-400/30 rounded-full px-6 py-6 mb-8 animate-fade-in shadow-xl shadow-sky-400/10">
+            <ShieldCheck className="w-4 h-4 text-sky-400" />
+            <span className="text-sm font-medium text-slate-200">Next-Gen Web3 Security Platform</span>
+            <div className="w-2 h-2 bg-sky-400 rounded-full animate-pulse"></div>
           </div>
 
           {/* Main Heading */}
           <div className="font-ibm secure space-y-2 mb-12 relative">
-             
-            <h1 className="text-6xl  md:text-8xl lg:text-9xl font-black leading-[0.9] tracking-tight  drop-shadow-2xl relative z-40" style={{ textShadow: '0 0 20px rgba(59, 130, 246, 0.3)' }}>
-              <span className="block text-shadow-lg/30 font-ibm text-white animate-fade-in">
+            <div>
+            <h1 className={`text-6xl  ${silkscreen.className}  md:text-8xl lg:text-9xl font-black leading-[0.9] tracking-tight  drop-shadow-2xl relative z-40`} style={{ textShadow: '0 0 20px rgba(14, 165, 233, 0.4)' }}>
+              <span className="block text-shadow-lg/30  text-slate-100 animate-fade-in">
                 SECURE
               </span>
               
               <div className="block animate-fade-in mt-8 delay-200">
                 <div className="text-6xl md:text-8xl lg:text-9xl font-white">
-                  <span className="font-bold text-gray-100">WEB</span>
+                  <span className="font-bold text-slate-100">WEB</span>
             <TextGif gifUrl={gifUrls[2]} text="3" size="xxxl" weight="bold" />
                 </div>
                  
@@ -138,11 +154,11 @@ const Hero = () => {
                 {/* SparklesCore positioned directly under WEB3 */}
                 <div className="w-full h-16 relative mt-1 flex justify-center">
                   <div className="w-[300px] md:w-[400px] lg:w-[500px] h-full relative">
-                    {/* Gradients */}
-                    <div className="absolute inset-x-20 top-0 bg-gradient-to-r from-transparent via-indigo-500 to-transparent h-[2px] w-3/4 blur-sm" />
-                    <div className="absolute inset-x-20 top-0 bg-gradient-to-r from-transparent via-indigo-500 to-transparent h-px w-3/4" />
-                    <div className="absolute inset-x-60 top-0 bg-gradient-to-r from-transparent via-sky-500 to-transparent h-[5px] w-1/4 blur-sm" />
-                    <div className="absolute inset-x-60 top-0 bg-gradient-to-r from-transparent via-sky-500 to-transparent h-px w-1/4" />
+                    {/* Enhanced Security-themed Gradients */}
+                    <div className="absolute inset-x-20 top-0 bg-gradient-to-r from-transparent via-sky-500 to-transparent h-[2px] w-3/4 blur-sm" />
+                    <div className="absolute inset-x-20 top-0 bg-gradient-to-r from-transparent via-sky-400 to-transparent h-px w-3/4" />
+                    <div className="absolute inset-x-60 top-0 bg-gradient-to-r from-transparent via-cyan-500 to-transparent h-[5px] w-1/4 blur-sm" />
+                    <div className="absolute inset-x-60 top-0 bg-gradient-to-r from-transparent via-cyan-400 to-transparent h-px w-1/4" />
              
                     {/* Core component */}
                     <SparklesCore
@@ -151,7 +167,7 @@ const Hero = () => {
                       maxSize={1}
                       particleDensity={1200}
                       className="w-full h-full"
-                      particleColor="#FFFFFF"
+                      particleColor="#0ea5e9"
                     />
              
                     {/* Radial Gradient to prevent sharp edges */}
@@ -161,21 +177,21 @@ const Hero = () => {
               </div>
              
               <div className="flex items-center justify-center gap-12 animate-fade-in delay-400">
-                <span className="text-gray-200">
+                <span className="text-slate-300">
                   WITH
                 </span>
                 <PointerHighlight
-                  rectangleClassName="bg-gradient-to-r from-white-500/30 to-emerald-500/30 border-2 border-green-400/40"
-                  pointerClassName="text-green-300"
+                  rectangleClassName="bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border-2 border-emerald-400/40"
+                  pointerClassName="text-emerald-300"
                 >
                   <span className="relative z-50 font-black text-6xl md:text-8xl lg:text-9xl animate-fade-in delay-600" 
                     style={{ 
-                      background: 'linear-gradient(135deg, #10b981, #34d399, #6ee7b7, #10b981)',
+                      background: 'linear-gradient(135deg, #059669, #10b981, #34d399, #6ee7b7)',
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
                       backgroundClip: 'text',
-                      textShadow: '0 0 30px rgba(16, 185, 129, 0.6), 0 0 60px rgba(52, 211, 153, 0.4), 0 0 90px rgba(16, 185, 129, 0.3)',
-                      filter: 'drop-shadow(0 0 20px rgba(16, 185, 129, 0.5))',
+                      textShadow: '0 0 30px rgba(5, 150, 105, 0.7), 0 0 60px rgba(16, 185, 129, 0.5), 0 0 90px rgba(5, 150, 105, 0.4)',
+                      filter: 'drop-shadow(0 0 25px rgba(232, 239, 237, 0.6))',
                       backgroundSize: '300% 100%',
                       animation: 'gradient-shift 4s ease-in-out infinite'
                     }}
@@ -185,17 +201,30 @@ const Hero = () => {
                 </PointerHighlight>
               </div>
             </h1>
+             {/* Lights effect positioned to emerge from behind text and extend to subtitle */}
+             {/* Lights Effect - positioned behind main heading, extending to subtitle */}
+             <div className={'absolute z-0 animate-appear opacity-0'} 
+                  style={{
+                    top: '10vh',
+                    left: '-20vw',
+                    width: '140vw',
+                    height: '60vh',
+                    pointerEvents: 'none'
+                  }}>
+               <Lights className="w-full h-full" limitHeight={true} />
+             </div>
+</div>
+          
+
             
             {/* RetroGrid comment removed - now positioned as full-screen background */}
           
           </div>
-          
 
-
-          {/* Subtitle */}
-          <p className="text-sm md:text-base lg:text-lg text-gray-400 max-w-4xl mx-auto mb-12 font-light leading-relaxed animate-fade-in delay-800 font-['Inter'] drop-shadow-lg" style={{ textShadow: '0 0 15px rgba(59, 130, 246, 0.2)' }}>
+          {/* Professional Web3 Security Subtitle */}
+          <p className="text-sm md:text-base lg:text-lg text-slate-400 max-w-4xl mx-auto mb-12 font-light leading-relaxed animate-fade-in delay-800 font-['Inter'] drop-shadow-lg" style={{ textShadow: '0 0 15px rgba(14, 165, 233, 0.2)' }}>
             Revolutionary AI-powered smart contract auditing platform that{" "}
-            <span className="text-white font-semibold">
+            <span className="text-slate-200 font-semibold">
               detects vulnerabilities 10x faster
             </span>{" "}
             than traditional methods
@@ -215,23 +244,30 @@ const Hero = () => {
           <div> <ContainerScroll
         titleComponent={
           <>
-            <h1 className="text-4xl font-semibold text-black dark:text-white">
+            <h1 className="text-4xl font-semibold text-white dark:text-white">
               Unleash the power of <br />
-              <span className="text-4xl md:text-[6rem] font-bold mt-1 leading-none">
-                Scroll Animations
-              </span>
+              <span className="text-4xl md:text-[6rem] mb-4 my-4 font-bold mt-1 leading-none">
+               ZERA
+               </span>
             </h1>
           </>
         }
       >
-        <img
-          src={`/linear.webp`}
-          alt="hero"
-          height={720}
-          width={1400}
-          className="mx-auto rounded-2xl object-cover h-full object-left-top"
-          draggable={false}
-        />
+        <div className="w-full h-full rounded-2xl overflow-hidden">
+          <img
+            src={`/image.png`}
+            alt="Zera Security Dashboard"
+            className="w-full h-full object-cover"
+            draggable={false}
+            style={{
+              objectFit: 'cover',
+              objectPosition: 'center top',
+              width: '100%',
+              height: '100%',
+              display: 'block'
+            }}
+          />
+        </div>
       </ContainerScroll></div>
          
 

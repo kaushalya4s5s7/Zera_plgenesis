@@ -7,10 +7,10 @@ import CTA from "@/components/home/CTA";
 import WobbleCardDemo from "@/components/home/WobbleCardDemo";
 import Footer from "@/components/home/footer";
 import FeaturesSectionDemo from "@/components/home/featuresdemo";
-import FeatureCarousel from "@/components/home/FeatureCorousel";
-import Web3Zone from "@/components/home/web3zone";
-import { useAutoConnect } from "@civic/auth-web3/wagmi";
-import CivicWalletManager from "@/components/home/afterLogin";
+// import FeatureCarousel from "@/components/home/FeatureCorousel";
+// import Web3Zone from "@/components/home/web3zone";
+// import { useAutoConnect } from "@civic/auth-web3/wagmi";
+// import CivicWalletManager from "@/components/home/afterLogin";
 import WalletInitializer from "@/components/home/WalletInitializer";
 import  {SmoothCursor}   from "@/components/ui/smooth-cursor"
 import Eight from "../components/ui/eight";
@@ -63,7 +63,7 @@ const HomePage = () => {
         <Features />
         <SmoothCursor />
 
-        <FeatureCarousel
+        {/* <FeatureCarousel
           title="How Zera Works"
           description="All in one Solution"
           image={{
@@ -74,7 +74,7 @@ const HomePage = () => {
             step4light: "/builder.PNG",
             alt: "Feature showcase",
           }}
-        />
+        /> */}
         <CanvasRevealEffectDemo/>
         {/* <Testimonials /> */}
         <CTA />
