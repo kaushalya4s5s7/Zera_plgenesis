@@ -18,7 +18,6 @@ const silkscreen = Silkscreen({
 
  
 import { TextGif } from "../ui/text-gif"; 
-import { Lights } from "../ui/Lights";
 
 const Hero = () => {
   const [text, setText] = useState("TextGif")
@@ -201,18 +200,8 @@ const Hero = () => {
                 </PointerHighlight>
               </div>
             </h1>
-             {/* Lights effect positioned to emerge from behind text and extend to subtitle */}
-             {/* Lights Effect - positioned behind main heading, extending to subtitle */}
-             <div className={'absolute z-0 animate-appear opacity-0'} 
-                  style={{
-                    top: '10vh',
-                    left: '-20vw',
-                    width: '140vw',
-                    height: '60vh',
-                    pointerEvents: 'none'
-                  }}>
-               <Lights className="w-full h-full" limitHeight={true} />
-             </div>
+             <div className={'absolute bottom-0 left-0 w-full h-full z-0 animate-appear opacity-0'}>
+        </div>
 </div>
           
 
