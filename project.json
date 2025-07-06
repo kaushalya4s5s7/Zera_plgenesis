@@ -1,0 +1,24 @@
+{
+  "name": "Zera",
+  "tagline": "AI-powered smart contract auditing with on-chain transparency",
+  "description": "Zera is an all-in-one solution for smart contract security. It enables AI-powered contract generation, documentation generation, test generation, and auditing report creation. Zera audits contracts across multiple chains using LLMs, and securely registers results on-chain with integrations like Filecoin, ZK, and other Web3 tools for complete decentralized transparency.",
+  "team": [
+    {
+      "name": "Kaushal Chaudhari",
+      "email": "chaudharikaushal02@gmail.com"
+    }
+  ],
+  "demo_url": "https://zera-plgenesis.vercel.app",
+  "video_url": "https://drive.google.com/file/d/1Ct9Eqtbym1hhSPapXjcrJscDhbdWBtTD/view?usp=sharing",
+  "technologies": [
+    "Next.js",
+    "React",
+    "Wagmi",
+    "Ethers.js",
+    "ZK",
+    "Filecoin",
+    "TailwindCSS",
+    "AI (Mistral, OpenAI)",
+    "Cortensor Web3 SDK"
+  ]
+}
