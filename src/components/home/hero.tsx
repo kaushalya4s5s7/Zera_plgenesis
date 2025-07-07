@@ -7,22 +7,27 @@ import { SparklesCore } from "../ui/sparkles";
 import { RetroGrid } from "../magicui/retro-grid";
 import BackgroundPath from "../ui/BackgroundPath";
 import Counter from "../ui/counter";
-import { useState } from "react";
+import { useRouter } from "next/router";
+import { useState,useCallback,useEffect } from "react";
 import { ContainerScroll } from "../ui/container-scroll-animation";
 import { Silkscreen } from "next/font/google";
-
-const silkscreen = Silkscreen({
-  subsets: ["latin"],
-  weight: "400",
-});
-
- 
+import Image from "next/image";
 import { TextGif } from "../ui/text-gif"; 
+import { RainbowButton } from "../magicui/rainbow-button";
+import {  useUser } from "@civic/auth/react";
+
+const silkscreen = Silkscreen({ 
+  subsets: ['latin'], 
+  weight: '400',
+  style: 'normal',
+  display: 'swap',
+})
 
 const Hero = () => {
   const [text, setText] = useState("TextGif")
   const [size, setSize] = useState("xl")
   const [weight, setWeight] = useState("bold")
+  const {user,signIn} = useUser();
  
   const gifUrls = [
     "https://media.giphy.com/media/3zvbrvbRe7wxBofOBI/giphy.gif",
@@ -31,9 +36,37 @@ const Hero = () => {
     "https://media.giphy.com/media/4bhs1boql4XVJgmm4H/giphy.gif",
   ]
  
+
+  const doSignIn = useCallback(() => {
+        console.log("Starting sign-in process");
+        
+        signIn()
+          .then((): void => {
+            console.log("Sign-in completed successfully");
+          })
+          .catch((error: unknown): void => {
+            console.error("Sign-in failed:", error);
+          });
+      }, [signIn]);
+   
+
   const [selectedGif, setSelectedGif] = useState(gifUrls[0]);
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden bg-black">
+      {/* Zera Logo - Top Left Corner */}
+      <div className="absolute top-6 left-6 z-50">
+        <a href="/">
+          <Image
+            src="/Gemini_Generated_Image_u9x2jru9x2jru9x2.png"
+            alt="Zera Logo"
+            width={60}
+            height={20}
+            className="object-contain rounded-2xl opacity-90 hover:opacity-100 transition-opacity duration-300"
+            priority
+          />
+        </a>
+      </div>
+
       {/* Minimalistic Dot Grid Background - Web3 Security Theme */}
       <div 
         className="absolute inset-0 z-0 dot-grid-animated dot-grid-pulse"
@@ -80,6 +113,45 @@ const Hero = () => {
         angle={45}
         opacity={0.6}
       /> */}
+
+      {/* Ultra Wide Dispersed Light Rays from Top Middle - Static & Visible */}
+      <div className="absolute inset-0 z-5 overflow-hidden">
+        {/* Main light source from top center - More prominent */}
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-sky-400/70 rounded-full blur-md opacity-90"></div>
+        
+        {/* Ultra wide dispersed light rays - enhanced visibility */}
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-6 h-[800px] bg-gradient-to-b from-sky-400/35 via-sky-300/25 via-sky-200/15 via-sky-100/8 to-transparent blur-lg rotate-[-70deg] origin-top opacity-95"></div>
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-7 h-[750px] bg-gradient-to-b from-sky-300/30 via-blue-300/22 via-blue-200/14 via-blue-100/8 to-transparent blur-lg rotate-[-60deg] origin-top opacity-90"></div>
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-8 h-[720px] bg-gradient-to-b from-sky-400/40 via-sky-300/28 via-sky-200/18 via-sky-100/10 to-transparent blur-lg rotate-[-50deg] origin-top opacity-95"></div>
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-7 h-[680px] bg-gradient-to-b from-cyan-400/32 via-cyan-300/24 via-cyan-200/16 via-cyan-100/8 to-transparent blur-lg rotate-[-40deg] origin-top opacity-88"></div>
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-9 h-[650px] bg-gradient-to-b from-sky-500/42 via-sky-400/30 via-sky-300/20 via-sky-200/12 to-transparent blur-lg rotate-[-30deg] origin-top opacity-98"></div>
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-8 h-[620px] bg-gradient-to-b from-blue-400/35 via-blue-300/26 via-blue-200/17 via-blue-100/9 to-transparent blur-lg rotate-[-20deg] origin-top opacity-92"></div>
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-10 h-[600px] bg-gradient-to-b from-sky-400/45 via-sky-300/32 via-sky-200/22 via-sky-100/12 to-transparent blur-lg rotate-[-10deg] origin-top opacity-100"></div>
+        
+        {/* Central ultra strong rays - Maximum visibility */}
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-12 h-[580px] bg-gradient-to-b from-sky-400/50 via-sky-300/36 via-sky-200/25 via-sky-100/15 to-transparent blur-lg rotate-0 origin-top opacity-100"></div>
+        
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-10 h-[600px] bg-gradient-to-b from-sky-500/45 via-sky-400/32 via-sky-300/22 via-sky-200/12 to-transparent blur-lg rotate-[10deg] origin-top opacity-100"></div>
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-8 h-[620px] bg-gradient-to-b from-cyan-400/35 via-cyan-300/26 via-cyan-200/17 via-cyan-100/9 to-transparent blur-lg rotate-[20deg] origin-top opacity-92"></div>
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-9 h-[650px] bg-gradient-to-b from-sky-400/42 via-sky-300/30 via-sky-200/20 via-sky-100/12 to-transparent blur-lg rotate-[30deg] origin-top opacity-98"></div>
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-7 h-[680px] bg-gradient-to-b from-cyan-400/32 via-cyan-300/24 via-cyan-200/16 via-cyan-100/8 to-transparent blur-lg rotate-[40deg] origin-top opacity-88"></div>
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-8 h-[720px] bg-gradient-to-b from-sky-400/40 via-sky-300/28 via-sky-200/18 via-sky-100/10 to-transparent blur-lg rotate-[50deg] origin-top opacity-95"></div>
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-7 h-[750px] bg-gradient-to-b from-sky-300/30 via-blue-300/22 via-blue-200/14 via-blue-100/8 to-transparent blur-lg rotate-[60deg] origin-top opacity-90"></div>
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-6 h-[800px] bg-gradient-to-b from-sky-400/35 via-sky-300/25 via-sky-200/15 via-sky-100/8 to-transparent blur-lg rotate-[70deg] origin-top opacity-95"></div>
+        
+        {/* Extreme wide dispersed rays for maximum coverage - Enhanced visibility */}
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-5 h-[900px] bg-gradient-to-b from-cyan-400/25 via-cyan-300/18 via-cyan-200/12 via-cyan-100/6 to-transparent blur-xl rotate-[-85deg] origin-top opacity-85"></div>
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-5 h-[900px] bg-gradient-to-b from-cyan-400/25 via-cyan-300/18 via-cyan-200/12 via-cyan-100/6 to-transparent blur-xl rotate-[85deg] origin-top opacity-85"></div>
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-4 h-[950px] bg-gradient-to-b from-blue-400/20 via-blue-300/14 via-blue-200/9 via-blue-100/5 to-transparent blur-xl rotate-[-95deg] origin-top opacity-75"></div>
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-4 h-[950px] bg-gradient-to-b from-blue-400/20 via-blue-300/14 via-blue-200/9 via-blue-100/5 to-transparent blur-xl rotate-[95deg] origin-top opacity-75"></div>
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-3 h-[1000px] bg-gradient-to-b from-sky-400/18 via-sky-300/12 via-sky-200/8 via-sky-100/4 to-transparent blur-xl rotate-[-105deg] origin-top opacity-70"></div>
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-3 h-[1000px] bg-gradient-to-b from-sky-400/18 via-sky-300/12 via-sky-200/8 via-sky-100/4 to-transparent blur-xl rotate-[105deg] origin-top opacity-70"></div>
+        
+        {/* Ultra wide ambient glow for massive dispersed effect - More visible */}
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-64 h-[500px] bg-gradient-to-b from-sky-400/15 via-sky-300/10 via-sky-200/6 via-sky-100/3 to-transparent blur-2xl origin-top opacity-60"></div>
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-80 h-[450px] bg-gradient-to-b from-blue-400/12 via-blue-300/8 via-blue-200/5 via-blue-100/2 to-transparent blur-2xl origin-top opacity-55"></div>
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-96 h-[400px] bg-gradient-to-b from-cyan-400/10 via-cyan-300/6 via-cyan-200/4 via-cyan-100/2 to-transparent blur-2xl origin-top opacity-50"></div>
+      </div>
 
       {/* Cohesive accent lighting - Web3 Security Theme */}
       <div className="absolute inset-0 z-5">
@@ -129,9 +201,9 @@ const Hero = () => {
       <div className="container mx-auto px-4 relative z-30">
         <div className="text-center max-w-6xl mx-auto">
           {/* Premium Web3 Security Badge */}
-          <div className="inline-flex items-center gap-3 mt-2 pd-4 bg-slate-900/80 backdrop-blur-md border border-sky-400/30 rounded-full px-6 py-6 mb-8 animate-fade-in shadow-xl shadow-sky-400/10">
-            <ShieldCheck className="w-4 h-4 text-sky-400" />
-            <span className="text-sm font-medium text-slate-200">Next-Gen Web3 Security Platform</span>
+          <div className="inline-flex items-center gap-3 mt-2 pd-3 bg-slate-900/80 backdrop-blur-md border border-sky-400/30 rounded-full px-3 py-3 mb-8 animate-fade-in shadow-xl shadow-sky-400/10">
+            <ShieldCheck className="w-3 h-1 text-sky-400" />
+            <span className="text-sm font-small text-slate-200">Next-Gen Web3 Security Platform</span>
             <div className="w-2 h-2 bg-sky-400 rounded-full animate-pulse"></div>
           </div>
 
@@ -139,8 +211,12 @@ const Hero = () => {
           <div className="font-ibm secure space-y-2 mb-12 relative">
             <div>
             <h1 className={`text-6xl  ${silkscreen.className}  md:text-8xl lg:text-9xl font-black leading-[0.9] tracking-tight  drop-shadow-2xl relative z-40`} style={{ textShadow: '0 0 20px rgba(14, 165, 233, 0.4)' }}>
-              <span className="block text-shadow-lg/30  text-slate-100 animate-fade-in">
+              <span className="block text-shadow-lg/30  text-slate-100 animate-fade-in relative">
                 SECURE
+                {/* Subtle glow effect around SECURE text */}
+                <div className="absolute inset-0 text-6xl md:text-8xl lg:text-9xl font-black opacity-20 blur-sm" style={{ textShadow: '0 0 60px rgba(14, 165, 233, 0.8), 0 0 100px rgba(14, 165, 233, 0.4)' }}>
+                  SECURE
+                </div>
               </span>
               
               <div className="block animate-fade-in mt-8 delay-200">
@@ -180,21 +256,10 @@ const Hero = () => {
                   WITH
                 </span>
                 <PointerHighlight
-                  rectangleClassName="bg-gradient-to-r from-emerald-500/20 to-teal-500/20 border-2 border-emerald-400/40"
+                  rectangleClassName="bg-gradient-to-r  border-2 border-emerald-400/40"
                   pointerClassName="text-emerald-300"
                 >
-                  <span className="relative z-50 font-black text-6xl md:text-8xl lg:text-9xl animate-fade-in delay-600" 
-                    style={{ 
-                      background: 'linear-gradient(135deg, #059669, #10b981, #34d399, #6ee7b7)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text',
-                      textShadow: '0 0 30px rgba(5, 150, 105, 0.7), 0 0 60px rgba(16, 185, 129, 0.5), 0 0 90px rgba(5, 150, 105, 0.4)',
-                      filter: 'drop-shadow(0 0 25px rgba(232, 239, 237, 0.6))',
-                      backgroundSize: '300% 100%',
-                      animation: 'gradient-shift 4s ease-in-out infinite'
-                    }}
-                  >
+                  <span className="relative z-50 font-white text-6xl md:text-8xl lg:text-9xl animate-fade-in delay-600">
                     ZERA
                   </span>
                 </PointerHighlight>
@@ -221,13 +286,11 @@ const Hero = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16 animate-fade-in delay-1000">
-            <Button 
-              size="lg" 
-              className=" glow-button min-w-[200px] font-['Inter']"
-            >
-              Start Free Audit
-              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            
+              <RainbowButton onClick={doSignIn} className="text-white">Start Free Audit</RainbowButton>
+              
+             
+           
             
           </div>
           <div> <ContainerScroll

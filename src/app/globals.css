@@ -169,7 +169,7 @@ main {
     transparent 80%
   );
   z-index: -1;
-  
+
   inset: -1px;
 }
 
@@ -203,12 +203,68 @@ main {
 @layer utilities {
   /* Combined utility classes */
 
+  /* Dock Navigation Styles */
+  .dock-icon {
+    @apply relative overflow-hidden transition-all duration-300 ease-out;
+  }
+
+  .dock-icon::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 transition-opacity duration-300;
+  }
+
+  .dock-icon:hover::before {
+    @apply opacity-100;
+  }
+
+  .dock-icon-glow {
+    @apply relative;
+    filter: drop-shadow(0 0 8px rgba(139, 92, 246, 0.3));
+  }
+
+  .dock-icon-glow:hover {
+    filter: drop-shadow(0 0 12px rgba(139, 92, 246, 0.5));
+  }
+
+  /* Enhanced glass morphism for dock */
+  .dock-glass {
+    @apply bg-black/20 backdrop-blur-2xl border border-white/20 shadow-2xl;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  }
+
+  /* Light Ray Animations */
+  .light-ray {
+    animation: lightRayPulse 4s ease-in-out infinite;
+  }
+
+  .light-ray-glow {
+    animation: lightRayGlow 6s ease-in-out infinite;
+  }
+
+  .light-ray-shimmer {
+    animation: lightRayShimmer 3s ease-in-out infinite;
+  }
+
+  /* Enhanced Light Ray Styles for Wide Angle Effect */
+  .light-ray-wide {
+    animation: lightRayWide 5s ease-in-out infinite;
+    background: linear-gradient(to bottom, 
+      rgba(14, 165, 233, 0.6) 0%, 
+      rgba(14, 165, 233, 0.4) 30%, 
+      rgba(14, 165, 233, 0.2) 60%, 
+      transparent 100%
+    );
+  }
+
+  .light-ray-beam {
+    animation: lightRayBeam 4s ease-in-out infinite;
+    filter: blur(1px);
+  }
 
   .secure{
     font-family :"IBM Plex Mono", monospace
   }
 
- 
   .logo-gradient-text {
     background: linear-gradient(
       135deg,
@@ -447,6 +503,72 @@ main {
     }
   }
 
+  @keyframes lightRayPulse {
+    0%, 100% {
+      opacity: 0.4;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.8;
+      transform: scale(1.05);
+    }
+  }
+
+  @keyframes lightRayGlow {
+    0%, 100% {
+      opacity: 0.2;
+      filter: blur(1px);
+    }
+    50% {
+      opacity: 0.6;
+      filter: blur(2px);
+    }
+  }
+
+  @keyframes lightRayShimmer {
+    0%, 100% {
+      opacity: 0.3;
+      transform: translateY(0px);
+    }
+    33% {
+      opacity: 0.7;
+      transform: translateY(-2px);
+    }
+    66% {
+      opacity: 0.5;
+      transform: translateY(1px);
+    }
+  }
+
+  @keyframes lightRayWide {
+    0%, 100% {
+      opacity: 0.3;
+      transform: scale(1) translateY(0px);
+    }
+    50% {
+      opacity: 0.7;
+      transform: scale(1.1) translateY(-3px);
+    }
+  }
+
+  @keyframes lightRayBeam {
+    0%, 100% {
+      opacity: 0.4;
+      transform: scaleY(1) scaleX(1);
+      filter: blur(1px);
+    }
+    33% {
+      opacity: 0.8;
+      transform: scaleY(1.05) scaleX(1.2);
+      filter: blur(2px);
+    }
+    66% {
+      opacity: 0.6;
+      transform: scaleY(0.95) scaleX(0.9);
+      filter: blur(1.5px);
+    }
+  }
+
   .typing-animation {
     display: inline-block;
     overflow: hidden;
@@ -498,7 +620,21 @@ main {
     transform: translateY(0);
     }
   }
-}
+  --animate-rainbow: rainbow var(--speed, 2s) infinite linear;
+  --color-color-5: var(--color-5);
+  --color-color-4: var(--color-4);
+  --color-color-3: var(--color-3);
+  --color-color-2: var(--color-2);
+  --color-color-1: var(--color-1)
+;
+  @keyframes rainbow {
+  0% {
+    background-position: 0%;
+    }
+  100% {
+    background-position: 200%;
+    }
+  }}
 
 @layer base {
   * {
@@ -573,4 +709,20 @@ main {
 
 .animate-gradient-shift {
   animation: gradient-shift 4s ease-in-out infinite;
+}
+
+:root {
+  --color-1: oklch(66.2% 0.225 25.9);
+  --color-2: oklch(60.4% 0.26 302);
+  --color-3: oklch(69.6% 0.165 251);
+  --color-4: oklch(80.2% 0.134 225);
+  --color-5: oklch(90.7% 0.231 133);
+}
+
+.dark {
+  --color-1: oklch(66.2% 0.225 25.9);
+  --color-2: oklch(60.4% 0.26 302);
+  --color-3: oklch(69.6% 0.165 251);
+  --color-4: oklch(80.2% 0.134 225);
+  --color-5: oklch(90.7% 0.231 133);
 }
