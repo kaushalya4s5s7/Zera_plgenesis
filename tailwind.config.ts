@@ -22,7 +22,13 @@ export default {
     },
     extend: {
       fontFamily: {
-        ibm: ['"IBM Plex Mono"', 'monospace'],
+        'silkscreen': ['var(--font-silkscreen)', 'monospace'],
+        'space-grotesk': ['var(--font-space-grotesk)', 'sans-serif'],
+        'inter': ['var(--font-inter)', 'sans-serif'],
+        'ibm-plex-mono': ['var(--font-ibm-plex-mono)', 'monospace'],
+        'ibm': ['var(--font-ibm-plex-mono)', 'monospace'],
+        'sans': ['var(--font-inter)', 'sans-serif'],
+        'mono': ['var(--font-ibm-plex-mono)', 'monospace'],
       },
       colors: {
         border: "hsl(var(--border))",

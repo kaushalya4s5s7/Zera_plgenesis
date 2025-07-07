@@ -1,5 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
-
 @custom-variant dark (&:is(.dark *));
 
 @tailwind base;
@@ -8,6 +6,12 @@
 
 @layer base {
   :root {
+    /* Font variables */
+    --font-silkscreen: var(--font-silkscreen);
+    --font-space-grotesk: var(--font-space-grotesk);
+    --font-inter: var(--font-inter);
+    --font-ibm-plex-mono: var(--font-ibm-plex-mono);
+    
     /* Combined color variables - prioritizing your global.css values */
     --background: #080220;
     --foreground: #ffffff;
@@ -262,7 +266,7 @@ main {
   }
 
   .secure{
-    font-family :"IBM Plex Mono", monospace
+    font-family: var(--font-ibm-plex-mono), monospace;
   }
 
   .logo-gradient-text {
