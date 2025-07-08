@@ -64,27 +64,28 @@ Everything is stored and processed securely — no manual intervention required.
 - **AI**: Mistral LLM API
 
 ---
-🚀 Future Enhancements to Zera's Security Capabilities
+**🚀 Future Enhancements to Zera's Security Capabilities**
 
 To elevate Zera’s smart contract auditing to the next level, several upcoming enhancements are planned. These focus on integrating proven security analysis tools, decentralized AI infrastructure, and knowledge-driven reasoning to deliver a comprehensive, trustless audit platform.
 
-1. Integration of Industry-Standard Static Analysis Tools
+**1. Integration of Industry-Standard Static Analysis Tools**
 Zera will incorporate widely respected static and symbolic analysis tools to ensure deeper coverage of contract vulnerabilities:
 
 Slither: Enables static analysis to detect known patterns of vulnerabilities such as reentrancy, uninitialized storage, and inefficient gas usage.
 Mythril: Provides symbolic execution capabilities that allow for the detection of deeper logical flaws like assertion violations, unreachable code, and security assumptions.
 These tools will run in parallel with Zera’s AI engine to provide both breadth and depth in vulnerability detection.
 
-2. Decentralized AI Inference via Cortensor SDK
+**2. Decentralized AI Inference via Cortensor SDK**
 To eliminate reliance on centralized AI models, Zera has integrated the Cortensor SDK into its codebase. This integration is designed to:
 
 Enable decentralized, cryptographically verifiable inference from a distributed network of AI nodes.
 Allow selection of specialized AI models based on the context of the smart contract being analyzed.
 Ensure transparent, censorship-resistant audits by removing trust from any single AI provider.
-Current Status:
+
+**Current Status:**
 While the Cortensor SDK is already integrated into Zera’s architecture, full functionality is currently pending due to node unreachability issues in the Cortensor network. As soon as reliable access to Cortensor nodes is re-established, Zera will fully transition to decentralized inference for all AI-based auditing.
 
-3. Integration of Open Knowledge Graphs using Neo4j
+**3. Integration of Open Knowledge Graphs using Neo4j**
 Zera will also incorporate structured knowledge through Neo4j-based graph data modeling:
 
 Semantic vulnerability mapping: Vulnerabilities, fixes, audit reports, and code patterns will be organized as a graph for intelligent cross-referencing.
