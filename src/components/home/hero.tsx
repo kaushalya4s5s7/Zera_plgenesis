@@ -321,6 +321,7 @@ const Hero = () => {
           />
         </div>
       </ContainerScroll></div>
+      
          
 
           {/* Stats */}

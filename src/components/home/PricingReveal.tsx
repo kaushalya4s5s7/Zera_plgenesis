@@ -78,27 +78,8 @@ export function CanvasRevealEffectDemo() {
           </div>
           
           <h1 className="text-3xl md:text-6xl font-mono md:text-5xl font-black tracking-tight font-['Space_Grotesk'] relative group cursor-default">
-            <span className="relative inline-block">
-              {/* Enhanced gradient with premium styling */}
-              <span 
-                className="bg-gradient-to-r from-white via-blue-100 via-purple-100 to-white bg-clip-text text-transparent"
-                style={{ 
-                  backgroundSize: '300% 100%',
-                  animation: 'gradient-shift 6s ease-in-out infinite',
-                  textShadow: '0 0 40px rgba(59, 130, 246, 0.6), 0 0 80px rgba(147, 51, 234, 0.4), 0 0 120px rgba(59, 130, 246, 0.3)',
-                  WebkitTextStroke: '1px rgba(255, 255, 255, 0.1)',
-                  filter: 'drop-shadow(0 0 20px rgba(59, 130, 246, 0.5))'
-                }}
-              >
-                ZERA'S
-              </span>
-              
-              {/* Enhanced underline effect */}
-              <div className="absolute -bottom-4 left-0 right-0 h-2 bg-gradient-to-r from-transparent via-blue-400 via-purple-400 to-transparent opacity-70 group-hover:opacity-100 transition-opacity duration-700 blur-sm"></div>
-              <div className="absolute -bottom-3 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-80"></div>
-            </span>
+           
             
-            <br className="hidden sm:block" />
             
             <span className="relative inline-block mt-4">
               <span 

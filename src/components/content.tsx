@@ -17,6 +17,9 @@ import Eight from "../components/ui/eight";
 import { useState } from "react";
 import {SplashImage} from "@/components/ui/ImageAnimateEffect";
 import { CanvasRevealEffectDemo } from "./home/PricingReveal";
+import { Timeline } from "./ui/timeline";
+import { TimelineDemo } from "./home/TimeLine";
+
 
 const HomePage = () => {
   const [showSplash, setShowSplash] = useState(true);
@@ -51,17 +54,21 @@ const HomePage = () => {
       <Navbar />
       <main>
         <Hero />
+
         
         <WobbleCardDemo />
+         
         {/* <CivicWalletManager /> */}
         {/* <Web3Zone /> */}
         {/* Uncomment the next line to use the moving strip feature */}
         {/* <MovingStrip items={movingStripItems} /> */}
         <WalletInitializer/>
         <FeaturesSectionDemo />
-        <Eight/>
+        {/* <Eight/> */}
+        <TimelineDemo />
         <Features />
         <SmoothCursor />
+
 
         {/* <FeatureCarousel
           title="How Zera Works"
@@ -75,7 +82,11 @@ const HomePage = () => {
             alt: "Feature showcase",
           }}
         /> */}
+        
         <CanvasRevealEffectDemo/>
+        
+        {/* Crossed LightBoard strips - positioned exactly above this component */}
+       
         {/* <Testimonials /> */}
         <CTA />
       </main>

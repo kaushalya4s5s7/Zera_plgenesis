@@ -47,8 +47,8 @@ const Features = () => {
         "Comprehensive security audits to identify vulnerabilities in your blockchain code.",
       animation: "animate-slide-in-left",
       delay: "delay-[0ms]",
-      color: "text-purple",
-      hoverEffect: "hover:shadow-[0_0_25px_rgba(155,135,245,0.4)]",
+      color: "text-white",
+      hoverEffect: "",
     },
     {
       icon: <Search className="h-8 w-8" />,
@@ -57,8 +57,8 @@ const Features = () => {
         "Automated tools to detect common security flaws and potential exploits.",
       animation: "animate-slide-in-left",
       delay: "delay-[100ms]",
-      color: "text-orange",
-      hoverEffect: "hover:shadow-[0_0_25px_rgba(249,115,22,0.4)]",
+      color: "text-white",
+      hoverEffect: "",
     },{
   icon: <Wallet className="h-8 w-8" />,
   title: "Civic Embedded Wallet",
@@ -66,8 +66,8 @@ const Features = () => {
     "Seamlessly authenticate users and manage wallets across EVM and Solana using Civic's embedded wallet SDK.",
   animation: "animate-slide-in-left",
   delay: "delay-[100ms]",
-  color: "text-blue-600",
-  hoverEffect: "hover:shadow-[0_0_25px_rgba(37,99,235,0.4)]",
+  color: "text-white",
+  hoverEffect: "",
 },
     {
       icon: <Code2 className="h-8 w-8" />,
@@ -76,8 +76,8 @@ const Features = () => {
         "Improve gas efficiency and performance of your smart contracts.",
       animation: "animate-slide-in-right",
       delay: "delay-[200ms]",
-      color: "text-purple",
-      hoverEffect: "hover:shadow-[0_0_25px_rgba(155,135,245,0.4)]",
+      color: "text-white",
+      hoverEffect: "",
     },
     {
       icon: <Zap className="h-8 w-8" />,
@@ -86,8 +86,8 @@ const Features = () => {
         "Robust test suites with simulation of various attack vectors.",
       animation: "animate-slide-in-right",
       delay: "delay-[300ms]",
-      color: "text-orange",
-      hoverEffect: "hover:shadow-[0_0_25px_rgba(249,115,22,0.4)]",
+      color: "text-white",
+      hoverEffect: "",
     },
     {
       icon: <Lock className="h-8 w-8" />,
@@ -95,8 +95,8 @@ const Features = () => {
       description: "Generate immutable on-chain audit reports to ensure transparency and trust in smart contract deployments.",
       animation: "animate-slide-in-left",
       delay: "delay-[400ms]",
-      color: "text-purple",
-      hoverEffect: "hover:shadow-[0_0_25px_rgba(155,135,245,0.4)]",
+      color: "text-white",
+      hoverEffect: "",
     },
     {
       icon: <Server className="h-8 w-8" />,
@@ -105,8 +105,8 @@ const Features = () => {
         "Ongoing security checks and alerts for your deployed contracts.",
       animation: "animate-slide-in-right",
       delay: "delay-[500ms]",
-      color: "text-orange",
-      hoverEffect: "hover:shadow-[0_0_25px_rgba(249,115,22,0.4)]",
+      color: "text-white",
+      hoverEffect: "",
     },
   ];
 
@@ -147,13 +147,23 @@ const Features = () => {
 
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-gradient mb-4 relative inline-block">
-            Comprehensive Web3 Security Features
-            <div className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-purple to-orange opacity-70"></div>
+          <h2 className="text-3xl md:text-5xl font-extrabold mb-4 relative inline-block tracking-tight">
+            <span className="bg-gradient-to-r from-white via-gray-200 to-white bg-clip-text text-transparent drop-shadow-lg">
+              Complete{" "}
+              <span className="bg-gradient-to-r from-purple-400 via-purple-300 to-purple-400 bg-clip-text text-transparent">
+                Web3 Security
+              </span>{" "}
+              & Development Suite
+            </span>
+            <div className="absolute -bottom-3 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-white/60 to-transparent rounded-full"></div>
+            <div className="absolute -bottom-1 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
           </h2>
-          <p className="text-white/70 max-w-2xl mx-auto text-lg">
-            Our all-in-one platform provides everything you need to secure,
-            test, and deploy your Web3 applications.
+          <p className="text-gray-300 max-w-2xl mx-auto text-lg font-medium tracking-wide leading-relaxed">
+            From{" "}
+            <span className="bg-gradient-to-r from-purple-400 to-purple-300 bg-clip-text text-transparent font-semibold">
+              smart contract auditing
+            </span>{" "}
+            to embedded wallets and on-chain reporting - everything you need for secure Web3 development and deployment.
           </p>
         </div>
 
@@ -162,87 +172,48 @@ const Features = () => {
             <div
               key={index}
               className={`
-                glass-morphism rounded-xl p-6 
+                relative rounded-xl p-6 overflow-hidden
+                bg-gradient-to-br from-gray-900/80 via-gray-800/60 to-gray-900/80
+                backdrop-blur-lg border border-gray-700/50
+                shadow-[0_8px_32px_rgba(0,0,0,0.3)]
                 transition-all duration-500 transform
+                before:absolute before:inset-0 before:bg-gradient-to-br 
+                before:from-white/10 before:via-transparent before:to-transparent
+                before:opacity-0 before:transition-opacity before:duration-500
+                hover:before:opacity-100
+                after:absolute after:inset-0 after:bg-gradient-to-br
+                after:from-transparent after:via-white/5 after:to-white/10
+                after:opacity-50
                 ${
                   animatedFeatures[index]
                     ? "opacity-100 translate-y-0"
                     : "opacity-0 translate-y-10"
                 }
-                ${
-                  hoveredFeature === index
-                    ? "scale-105 " + feature.hoverEffect
-                    : ""
-                }
               `}
-              onMouseEnter={() => setHoveredFeature(index)}
-              onMouseLeave={() => setHoveredFeature(null)}
               style={{
                 animationDelay: `${index * 100}ms`,
                 transitionDelay: `${index * 50}ms`,
               }}
             >
-              <div className="relative">
-                <div
-                  className={`
-                  bg-white/5 rounded-full w-16 h-16 flex items-center justify-center mb-6
-                  relative z-10 transition-transform duration-300
-                  ${animateIcon(index)}
-                `}
-                >
-                  <div className={`${feature.color}`}>{feature.icon}</div>
+              <div className="relative z-10">
+                <div className="bg-gradient-to-br from-white/20 to-white/5 rounded-full w-16 h-16 flex items-center justify-center mb-6 backdrop-blur-sm border border-white/20 shadow-lg">
+                  <div className="text-white">{feature.icon}</div>
                 </div>
 
-                {/* Interactive particles around the icon */}
-                {hoveredFeature === index && (
-                  <>
-                    <div className="absolute top-5 left-2 w-2 h-2 rounded-full bg-purple/50 animate-float"></div>
-                    <div className="absolute top-2 left-8 w-3 h-3 rounded-full bg-orange/50 animate-float-slow"></div>
-                    <div className="absolute top-8 left-14 w-2 h-2 rounded-full bg-purple/30 animate-float"></div>
-                  </>
-                )}
+                <h3 className="text-xl font-bold mb-3 text-white tracking-wide">
+                  {feature.title}
+                </h3>
+
+                <p className="text-gray-300 font-normal leading-relaxed tracking-wide">
+                  {feature.description}
+                </p>
               </div>
 
-              <h3
-                className={`text-xl font-semibold mb-3 text-white ${
-                  hoveredFeature === index ? feature.color : ""
-                }`}
-              >
-                {feature.title}
-              </h3>
-
-              <p className="text-white/70">{feature.description}</p>
-
-              {/* Interactive animation for hover state */}
-              {hoveredFeature === index && (
-                <div className="mt-4 flex items-center text-sm text-white/60 animate-fade-in">
-                  <span
-                    className={`mr-2 inline-block w-2 h-2 rounded-full ${feature.color.replace(
-                      "text-",
-                      "bg-"
-                    )}`}
-                  ></span>
-                  Learn more about this feature
-                </div>
-              )}
-
-              {/* Optional: Embed 3D Model (would typically use a proper 3D renderer like Three.js) */}
-              {hoveredFeature === index && (
-                <div className="absolute -bottom-4 -right-4 opacity-30 pointer-events-none">
-                  <div className="w-20 h-20">
-                    {/* This is a placeholder - in a real implementation, you would use Three.js or a similar library */}
-                    {/* <Canvas>
-                      <Model url={modelUrls[index]} />
-                    </Canvas> */}
-                    <div
-                      className={`w-full h-full rounded-full ${feature.color.replace(
-                        "text-",
-                        "bg-"
-                      )}/20 animate-pulse`}
-                    ></div>
-                  </div>
-                </div>
-              )}
+              {/* Premium shine effect */}
+              <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+                <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
+                <div className="absolute top-0 left-0 w-[1px] h-full bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
+              </div>
             </div>
           ))}
         </div>
