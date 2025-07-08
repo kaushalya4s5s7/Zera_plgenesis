@@ -60,7 +60,7 @@ Everything is stored and processed securely — no manual intervention required.
 - **Testing**: Hardhat, Foundry, Truffle
 - **Frontend**: React/Next.js
 - **Security**: Automated audits & vulnerability scans
-- **Blockchain**: Smart Contract deployed on  Sepolia Testnet ( address:0x49466ba632569a2d9f1919941468F17e287f26dA )
+- **Blockchain**: Smart Contract deployed on  Sepolia Testnet ( address:0xE3873898A217d64B08dB9aE587AfbdDc24b84409 )
 - **AI**: Mistral LLM API
 
 ---
@@ -89,7 +89,7 @@ npm run dev
 Have questions or need support?
 
 📩 Email: zeraaihelp@gmail.com
-🌐 Visit: [ https://zera-civicauth.onrender.com]( https://zera-civicauth.onrender.com)
+🌐 Visit: [ [https://zera-civicauth.onrender.com](https://zera-plgenesis.vercel.app)]
 
 📢 Contributing
 We welcome community collaboration!
