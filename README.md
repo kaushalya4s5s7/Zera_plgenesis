@@ -111,7 +111,7 @@ npm run dev
 Have questions or need support?
 
 📩 Email: zeraaihelp@gmail.com
-🌐 Visit: [ [https://zera-civicauth.onrender.com](https://zera-plgenesis.vercel.app)]
+🌐 Visit: [https://zera-plgenesis.vercel.app](https://zera-plgenesis.vercel.app)
 
 📢 Contributing
 We welcome community collaboration!
