@@ -239,10 +239,7 @@ const AuditResults = ({  isSwitchingChain, currentActiveChainId }: AuditResultsP
         args: [txHash as `0x${string}`, cid],
       });
 
-      toast({
-        title: "CID Mapping Submitted",
-        description: "Your CID mapping transaction has been submitted. Waiting for confirmation...",
-      });
+     
     } catch (error) {
       console.error("Error mapping CID to audit:", error);
       toast({
@@ -678,7 +675,7 @@ const AuditResults = ({  isSwitchingChain, currentActiveChainId }: AuditResultsP
               <p className="text-sm text-gray-300">{status}</p>
             ) : isUploadAttempting && currentActiveChainId !== filecoinCalibration.id ? (
               <p className="text-yellow-400 text-sm">Waiting for chain switch to complete...</p>
-            ) : null}
+            ) : <p className="text-yellow-400 text-sm">You can submit now on filecoin</p>}
 
             {progress > 0 && progress < 100 && (
               <div className="w-full bg-gray-600 rounded-full h-2 mt-2">
@@ -717,12 +714,7 @@ const AuditResults = ({  isSwitchingChain, currentActiveChainId }: AuditResultsP
         </div>
 
         {/* Upload Info */}
-        { !isLoading  && !isSwitchingChain && (
-          <p className="text-red-400 text-sm mt-2">
-            Cannot submit: Wallet not connected or network details not loaded.
-          </p>
-        )}
-
+      
         {uploadedInfo && (
           <div className="mt-4 p-3 bg-green-900/20 border border-green-500/50 rounded-lg">
             <h4 className="text-green-400 font-medium mb-2">Upload Successful!</h4>

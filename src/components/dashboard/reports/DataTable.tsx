@@ -160,26 +160,19 @@ const DataTable = ({ className }: DataTableProps) => {
         setIsLoading(true);
 
         // Check if we're on the correct network
-        if (effectiveChainId !== CHAIN_CONFIG.Sepolia.chainId) {
-          toast({
-            title: "Wrong Network",
-            description: "Please click on download button for download  ",
-            variant: "destructive",
-          });
-          return;
-        }
+       
 
         // Get contract address for current chain
         const contractAddress =
           CONTRACT_ADDRESSES[effectiveChain.name as ChainKey] ||
-          CONTRACT_ADDRESSES.Pharos;
+          CONTRACT_ADDRESSES.Sepolia;
 
         if (!contractAddress) {
           throw new Error("Contract address not found for current chain");
         }
 
         // Verify contract exists using publicClient
-        const code = await publicClient.getBytecode({
+        const code = await publicClient.getCode({
           address: contractAddress as `0x${string}`,
         });
 
@@ -321,11 +314,7 @@ const DataTable = ({ className }: DataTableProps) => {
 
       } catch (error) {
         console.error("Contract call error:", error);
-        toast({
-          title: "Contract Error",
-          description: error instanceof Error ? error.message : "Failed to read from the smart contract",
-          variant: "destructive",
-        });
+        
       } finally {
         setIsLoading(false);
       }

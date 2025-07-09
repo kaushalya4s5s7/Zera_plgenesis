@@ -96,14 +96,7 @@ const AuditResults = ({  isSwitchingChain, currentActiveChainId }: AuditResultsP
   const { issues, auditScore, auditReport, contractHash, issueCount, setUploadedReportCID, setCurrentAuditHasUpload, auditTxHash, setAuditTxHash } = useAuditStore();
 
   // Debug auditTxHash state
-  useEffect(() => {
-    console.log("=== AUDIT TX HASH DEBUG ===");
-    console.log("auditTxHash from store:", auditTxHash);
-    console.log("auditTxHash type:", typeof auditTxHash);
-    console.log("auditTxHash length:", auditTxHash?.length);
-    console.log("auditTxHash truthy:", !!auditTxHash);
-    console.log("==========================");
-  }, [auditTxHash]);
+  
 
   // Contract interaction hooks
   const { toast } = useToast();
@@ -128,33 +121,9 @@ const AuditResults = ({  isSwitchingChain, currentActiveChainId }: AuditResultsP
   const auditRegistryAddress = currentChainConfig?.contractAddress;
 
   // Debug chain configuration
-  useEffect(() => {
-    console.log("=== CHAIN CONFIG DEBUG ===");
-    console.log("Current Active Chain ID:", currentActiveChainId);
-    console.log("Available Chain Configs:", Object.values(CHAIN_CONFIG).map(c => ({ name: c.name, chainId: c.chainId, address: c.contractAddress })));
-    console.log("Current Chain Config:", currentChainConfig);
-    console.log("Audit Registry Address:", auditRegistryAddress);
-    console.log("==========================");
-  }, [currentActiveChainId, currentChainConfig, auditRegistryAddress]);
-
+  
   // Debug logging for auditTxHash changes
-  useEffect(() => {
-    console.log("=== AUDIT RESULTS: auditTxHash changed ===");
-    console.log("auditTxHash:", auditTxHash);
-    console.log("auditTxHash type:", typeof auditTxHash);
-    console.log("auditTxHash length:", auditTxHash?.length);
-    console.log("========================================");
-  }, [auditTxHash]);
-
-  // Debug logging for issues
-  useEffect(() => {
-    console.log("AuditResults Debug Info:", {
-      issuesCount: issues.length,
-      issues: issues,
-      auditReport: auditReport ? auditReport.substring(0, 500) + "..." : "No report",
-      issueCount: issueCount
-    });
-  }, [issues, auditReport, issueCount]);
+  
 
   // Store the uploaded report CID when upload completes and wait before chain switching
   useEffect(() => {
@@ -276,10 +245,7 @@ const AuditResults = ({  isSwitchingChain, currentActiveChainId }: AuditResultsP
         args: [txHash as `0x${string}`, cid],
       });
 
-      toast({
-        title: "CID Mapping Submitted",
-        description: "Your CID mapping transaction has been submitted. Go to reports section to view you audit",
-      });
+     
     } catch (error) {
       console.error("Error mapping CID to audit:", error);
       toast({
@@ -499,11 +465,7 @@ const AuditResults = ({  isSwitchingChain, currentActiveChainId }: AuditResultsP
       setIsUploadAttempting(false);
       
       // Show error to user
-      toast({
-        title: "Upload Failed",
-        description: `Failed to upload to Filecoin: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        variant: "destructive",
-      });
+     
     }
     // Note: We don't set setIsUploadAttempting(false) in finally block
     // because we want it to remain true until upload is complete (uploadedInfo is available)
@@ -856,11 +818,7 @@ const AuditResults = ({  isSwitchingChain, currentActiveChainId }: AuditResultsP
         </div>
 
         {/* Upload Info */}
-        { !isLoading  && !isSwitchingChain && (
-          <p className="text-red-400 text-sm mt-2">
-            Cannot submit: Wallet not connected or network details not loaded.
-          </p>
-        )}
+       
 
         {uploadedInfo && (
           <div className="mt-4 p-3 bg-green-900/20 border border-green-500/50 rounded-lg">
@@ -887,7 +845,7 @@ const AuditResults = ({  isSwitchingChain, currentActiveChainId }: AuditResultsP
               </div>
             ) : isMappingCID ? (
               <div className="mt-3 p-2 bg-blue-900/20 border border-blue-500/50 rounded text-xs text-blue-300">
-                ⏳ <strong>Mapping in Progress:</strong> Submitting CID mapping transaction to link your Filecoin report to the registered audit...
+                ⏳ <strong>Mapping in Progress:</strong> Submitting CID mapping transaction to link your Filecoin report to the registered audit...Till then you can go to reports section to download and view the reports
               </div>
             ) : (
               <div className="mt-3 p-2 bg-blue-900/20 border border-blue-500/50 rounded text-xs text-blue-300">
