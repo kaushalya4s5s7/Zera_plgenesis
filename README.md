@@ -53,6 +53,11 @@ Everything is stored and processed securely — no manual intervention required.
 
 ---
 
+## FileCoin to Dapp integration Learning 
+![image](https://github.com/kaushalya4s5s7/Zera_plgenesis/blob/main/public/Untitled-2025-06-06-1233.excalidraw-2.png)
+
+
+
 ## 🧰 Tech Stack
 
 
