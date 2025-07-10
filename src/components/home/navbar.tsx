@@ -136,9 +136,7 @@ const doSignIn = useCallback(() => {
             {/* User Button as Dock Icon */}
             <DockIcon className="bg-gradient-to-br from-indigo-500/20 to-purple-500/20 hover:from-indigo-400/30 hover:to-purple-400/30 border border-white/10 p-1 transition-all duration-300">
               <div className="flex items-center justify-center w-full h-full">
-                <button onClick={doSignIn}>
-          <User className="w-6 h-6 text-white" />
-        </button>
+               <UserButton/>
               </div>
             </DockIcon>
           </Dock>

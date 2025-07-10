@@ -27,8 +27,7 @@
   "redirects": [
     {
       "source": "/api/:path*",
-      "destination": "/api/:path*",
-      "permanent": true
+      "destination": "/api/:path*"
     }
   ]
 }

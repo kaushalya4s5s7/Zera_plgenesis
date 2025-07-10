@@ -33,11 +33,8 @@ const nextConfig: NextConfig = {
 
 const withCivicAuth = createCivicAuthPlugin({
   clientId: "7ed6d5cd-300f-415c-bcc0-69c399ec465d",
-  oauthServer: 'https://auth.civic.com',
-  callbackUrl: process.env.NODE_ENV === 'production' 
-    ? 'https://zera-plgenesis.vercel.app/api/auth/civicauth/callback'
-    : 'http://localhost:3000/api/auth/civicauth/callback',
-  loginSuccessUrl: "/pages/dashboard"
+  loginSuccessUrl: "/pages/dashboard",
+  basePath: "http://localhost:3000/"
 });
 
   
