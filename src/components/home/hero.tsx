@@ -7,7 +7,7 @@ import { SparklesCore } from "../ui/sparkles";
 import { RetroGrid } from "../magicui/retro-grid";
 import BackgroundPath from "../ui/BackgroundPath";
 import Counter from "../ui/counter";
-import { useRouter } from "next/router";
+import { useRouter } from "next/router"; // Note: useRouter is typically for client-side routing. If not used, can be removed.
 import { useState,useCallback,useEffect } from "react";
 import { ContainerScroll } from "../ui/container-scroll-animation";
 import { Silkscreen } from "next/font/google";
@@ -24,9 +24,9 @@ const silkscreen = Silkscreen({
 })
 
 const Hero = () => {
-  const [text, setText] = useState("TextGif")
-  const [size, setSize] = useState("xl")
-  const [weight, setWeight] = useState("bold")
+  const [text, setText] = useState("TextGif") // Unused state, consider removing if not needed.
+  const [size, setSize] = useState("xl") // Unused state, consider removing if not needed.
+  const [weight, setWeight] = useState("bold") // Unused state, consider removing if not needed.
   const {user,signIn} = useUser();
  
   const gifUrls = [
@@ -50,7 +50,7 @@ const Hero = () => {
       }, [signIn]);
    
 
-  const [selectedGif, setSelectedGif] = useState(gifUrls[0]);
+  const [selectedGif, setSelectedGif] = useState(gifUrls[0]); // Unused state, consider removing if not needed.
   return (
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden bg-black">
       {/* Zera Logo - Top Left Corner */}
@@ -66,6 +66,13 @@ const Hero = () => {
           />
         </a>
       </div>
+
+      {/* RainbowButton - Top Right Corner (exactly opposite Zera Logo) */}
+      {/* Changed `flex flex-col` to `absolute` and `top-6 right-6` */}
+      <div className="absolute top-6 right-6 z-50 animate-fade-in delay-1000">
+        <RainbowButton onClick={doSignIn} className="text-white">Start Free Audit</RainbowButton>
+      </div>
+
 
       {/* Minimalistic Dot Grid Background - Web3 Security Theme */}
       <div 
@@ -166,38 +173,6 @@ const Hero = () => {
         <div className="absolute top-20 right-1/3 w-64 h-64 rounded-full bg-cyan-400/3 blur-3xl animate-pulse opacity-40" style={{ animationDelay: '1s' }}></div>
       </div>
 
-      {/* Blue Light Border Effect */}
-      {/* <div className="absolute inset-0 z-10"> */}
-        {/* Top border light */}
-        {/* <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-400/60 to-transparent"></div> */}
-        {/* Bottom border light */}
-        {/* <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-400/60 to-transparent"></div> */}
-        {/* Left border light */}
-        {/* <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-transparent via-blue-400/60 to-transparent"></div> */}
-        {/* Right border light */}
-        {/* <div className="absolute top-0 right-0 w-1 h-full bg-gradient-to-b from-transparent via-blue-400/60 to-transparent"></div> */}
-        
-        {/* Corner glow effects */}
-        {/* <div className="absolute top-0 left-3 w-32 h-32 bg-blue-400/10 rounded-full blur-3xl"></div>
-        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-400/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-blue-400/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-0 w-32 h-32 bg-blue-400/10 rounded-full blur-3xl"></div>
-      </div> */}
-      {/* </div> */}
-
-      {/* Refined animated elements - Security theme */}
-      <div className="absolute inset-0 overflow-hidden z-20">
-        {/* Subtle security-themed floating elements */}
-        <div className="absolute top-20 left-10 w-1 h-1 bg-sky-400/40 rounded-full animate-pulse opacity-70"></div>
-        <div className="absolute top-40 right-20 w-1 h-1 bg-blue-400/50 rounded-full animate-pulse opacity-60" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute bottom-32 left-20 w-1 h-1 bg-cyan-400/40 rounded-full animate-pulse opacity-65" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute bottom-20 right-10 w-1 h-1 bg-sky-300/50 rounded-full animate-pulse opacity-55" style={{ animationDelay: '0.5s' }}></div>
-        
-        {/* Additional micro-animations for depth */}
-        <div className="absolute top-1/3 left-1/3 w-0.5 h-0.5 bg-blue-300/60 rounded-full animate-pulse opacity-40" style={{ animationDelay: '3s' }}></div>
-        <div className="absolute bottom-1/3 right-1/3 w-0.5 h-0.5 bg-sky-200/60 rounded-full animate-pulse opacity-45" style={{ animationDelay: '1.5s' }}></div>
-      </div>
-
       <div className="container mx-auto px-4 relative z-30">
         <div className="text-center max-w-6xl mx-auto">
           {/* Premium Web3 Security Badge */}
@@ -285,14 +260,7 @@ const Hero = () => {
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16 animate-fade-in delay-1000">
-            
-              <RainbowButton onClick={doSignIn} className="text-white">Start Free Audit</RainbowButton>
-              
-             
-           
-            
-          </div>
+          
           <div> <ContainerScroll
         titleComponent={
           <>
